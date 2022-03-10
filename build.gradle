@@ -25,6 +25,10 @@ repositories {
     mavenLocal()
 }
 
+runClient.doFirst {
+    args = ['--username', System.getProperty("user.name")]
+}
+
 dependencies {
     minecraft "com.mojang:minecraft:${minecraft_version}"
     mappings loom.officialMojangMappings()

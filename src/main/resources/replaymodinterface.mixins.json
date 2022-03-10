@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "xyz.breadloaf.replaymodinterface.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "InitMixin",
+    "accessor.ConnectionEventHandlerAccessor"
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

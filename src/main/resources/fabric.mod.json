@@ -5,7 +5,8 @@
   "name": "Replay Voice Chat",
   "description": "A compatibility mod between Simple Voice Chat and ReplayMod",
   "authors": [
-    "Max Henkel"
+    "Max Henkel",
+    "BreadLoaf"
   ],
   "contact": {
     "homepage": "https://modrepo.de/",
@@ -16,6 +17,7 @@
   "environment": "client",
   "entrypoints": {
     "client": [
+      "xyz.breadloaf.replaymodinterface.ReplayInterface",
       "de.maxhenkel.replayvoicechat.ReplayVoicechat"
     ],
     "voicechat": [
@@ -23,6 +25,7 @@
     ]
   },
   "mixins": [
+    "replaymodinterface.mixins.json",
     "replayvoicechat.mixins.json"
   ],
   "depends": {
