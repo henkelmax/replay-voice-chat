@@ -1,0 +1,70 @@
+plugins {
+    id 'fabric-loom' version '0.11-SNAPSHOT'
+}
+
+sourceCompatibility = JavaLanguageVersion.of(java_version as int)
+targetCompatibility = JavaLanguageVersion.of(java_version as int)
+
+archivesBaseName = archives_base_name
+version = mod_version
+group = maven_group
+
+repositories {
+    mavenCentral()
+    maven {
+        name = "henkelmax.public"
+        url = 'https://maven.maxhenkel.de/repository/public'
+    }
+    maven {
+        name = "Modrinth"
+        url = "https://api.modrinth.com/maven"
+        content {
+            includeGroup "maven.modrinth"
+        }
+    }
+    mavenLocal()
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${minecraft_version}"
+    mappings loom.officialMojangMappings()
+    modImplementation "net.fabricmc:fabric-loader:${loader_version}"
+
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
+
+    implementation 'com.google.code.findbugs:jsr305:3.0.2'
+
+    implementation "de.maxhenkel.voicechat:voicechat-api:${voicechat_api_version}"
+
+//    modRuntimeOnly "maven.modrinth:simple-voice-chat:fabric-${voicechat_dependency}"
+
+    modImplementation fileTree(dir: 'libs', include: '*.jar')
+}
+
+processResources {
+    inputs.property "version", version
+
+    filesMatching("fabric.mod.json") {
+        expand "version": mod_version,
+                "java_version": java_version,
+                "minecraft_dependency": minecraft_dependency,
+                "loader_version": loader_version,
+                "fabric_version": fabric_version,
+                "voicechat_dependency": voicechat_dependency,
+                "replaymod_dependency": replaymod_dependency
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    it.options.release = java_version as int
+}
+
+java {
+    withSourcesJar()
+}
+
+jar {
+    from("LICENSE") {
+        rename { "${it}_${project.archivesBaseName}" }
+    }
+}
