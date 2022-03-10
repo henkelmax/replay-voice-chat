@@ -15,6 +15,10 @@ public abstract class AbstractSoundPacket<T extends Packet<T>> implements Packet
         this.rawAudio = rawAudio;
     }
 
+    public AbstractSoundPacket() {
+
+    }
+
     public UUID getId() {
         return id;
     }
@@ -26,9 +30,7 @@ public abstract class AbstractSoundPacket<T extends Packet<T>> implements Packet
     @Override
     public T fromBytes(FriendlyByteBuf buf) {
         id = buf.readUUID();
-        if (buf.readBoolean()) {
-            rawAudio = Utils.bytesToShorts(buf.readByteArray());
-        }
+        rawAudio = Utils.bytesToShorts(buf.readByteArray());
         return (T) this;
     }
 

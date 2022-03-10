@@ -11,4 +11,6 @@ public interface Packet<T extends Packet<T>> {
 
     void toBytes(FriendlyByteBuf buf);
 
+    void onPacket();
+
 }

@@ -6,11 +6,13 @@ import de.maxhenkel.replayvoicechat.net.Packet;
 import de.maxhenkel.replayvoicechat.net.StaticSoundPacket;
 import de.maxhenkel.voicechat.api.events.ClientReceiveSoundEvent;
 import de.maxhenkel.voicechat.api.events.ClientSoundEvent;
+import de.maxhenkel.voicechat.api.opus.OpusEncoder;
 import io.netty.buffer.Unpooled;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import xyz.breadloaf.replaymodinterface.ReplayInterface;
 
+import java.util.Map;
 import java.util.UUID;
 
 public class VoicechatRecorder {

@@ -1,6 +1,7 @@
 package de.maxhenkel.replayvoicechat.net;
 
 import de.maxhenkel.replayvoicechat.ReplayVoicechat;
+import de.maxhenkel.replayvoicechat.playback.AudioPlaybackManager;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.UUID;
@@ -13,9 +14,18 @@ public class EntitySoundPacket extends AbstractSoundPacket<EntitySoundPacket> {
         super(id, rawAudio);
     }
 
+    public EntitySoundPacket() {
+
+    }
+
     @Override
     public ResourceLocation getIdentifier() {
         return ID;
+    }
+
+    @Override
+    public void onPacket() {
+        AudioPlaybackManager.INSTANCE.onEntitySound(this);
     }
 
 }

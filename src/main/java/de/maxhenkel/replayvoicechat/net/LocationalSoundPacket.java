@@ -2,6 +2,7 @@ package de.maxhenkel.replayvoicechat.net;
 
 import de.maxhenkel.replayvoicechat.ReplayVoicechat;
 import de.maxhenkel.replayvoicechat.ReplayVoicechatPlugin;
+import de.maxhenkel.replayvoicechat.playback.AudioPlaybackManager;
 import de.maxhenkel.voicechat.api.Position;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -19,6 +20,10 @@ public class LocationalSoundPacket extends AbstractSoundPacket<LocationalSoundPa
         this.location = location;
     }
 
+    public LocationalSoundPacket() {
+
+    }
+
     public Position getLocation() {
         return location;
     }
@@ -31,7 +36,7 @@ public class LocationalSoundPacket extends AbstractSoundPacket<LocationalSoundPa
     @Override
     public LocationalSoundPacket fromBytes(FriendlyByteBuf buf) {
         super.fromBytes(buf);
-        location = ReplayVoicechatPlugin.API.createPosition(buf.readDouble(), buf.readDouble(), buf.readDouble());
+        location = ReplayVoicechatPlugin.CLIENT_API.createPosition(buf.readDouble(), buf.readDouble(), buf.readDouble());
         return this;
     }
 
@@ -42,4 +47,10 @@ public class LocationalSoundPacket extends AbstractSoundPacket<LocationalSoundPa
         buf.writeDouble(location.getY());
         buf.writeDouble(location.getZ());
     }
+
+    @Override
+    public void onPacket() {
+        AudioPlaybackManager.INSTANCE.onLocationalSound(this);
+    }
+
 }
