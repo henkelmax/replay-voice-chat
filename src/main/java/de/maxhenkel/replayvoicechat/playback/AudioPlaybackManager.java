@@ -30,6 +30,9 @@ public class AudioPlaybackManager {
     }
 
     public void onEntitySound(EntitySoundPacket packet) {
+        if (ReplayInterface.INSTANCE.skipping) {
+            return;
+        }
         ClientEntityAudioChannel channel = entityAudioChannels.get(packet.getId());
         if (channel == null) {
             channel = ReplayVoicechatPlugin.CLIENT_API.createEntityAudioChannel(packet.getId());
@@ -39,6 +42,9 @@ public class AudioPlaybackManager {
     }
 
     public void onLocationalSound(LocationalSoundPacket packet) {
+        if (ReplayInterface.INSTANCE.skipping) {
+            return;
+        }
         ClientLocationalAudioChannel channel = locationalAudioChannels.get(packet.getId());
         if (channel == null) {
             channel = ReplayVoicechatPlugin.CLIENT_API.createLocationalAudioChannel(packet.getId(), packet.getLocation());
@@ -50,6 +56,9 @@ public class AudioPlaybackManager {
     }
 
     public void onStaticSound(StaticSoundPacket packet) {
+        if (ReplayInterface.INSTANCE.skipping) {
+            return;
+        }
         ClientStaticAudioChannel channel = staticAudioChannels.get(packet.getId());
         if (channel == null) {
             channel = ReplayVoicechatPlugin.CLIENT_API.createStaticAudioChannel(packet.getId());
@@ -61,7 +70,7 @@ public class AudioPlaybackManager {
         //TODO: need a better way of setting speed this does not handle very slow or very fast well at all
         // also maybe we can do this without pitch shifting audio? (have to write resample function?)
         if (ReplayInterface.INSTANCE.isInReplayEditor) {
-            AL11.alSourcef(event.getSource(),AL11.AL_PITCH, (float) ReplayInterface.INSTANCE.replayHandler.getReplaySender().getReplaySpeed());
+            AL11.alSourcef(event.getSource(), AL11.AL_PITCH, (float) ReplayInterface.INSTANCE.replayHandler.getReplaySender().getReplaySpeed());
         }
     }
 }

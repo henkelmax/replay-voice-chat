@@ -6,7 +6,8 @@
   "mixins": [
     "InitMixin",
     "ReplayHandlerMixin",
-    "accessor.ConnectionEventHandlerAccessor"
+    "accessor.ConnectionEventHandlerAccessor",
+    "FullReplaySenderMixin"
   ],
   "client": [
   ],

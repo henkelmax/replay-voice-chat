@@ -13,20 +13,20 @@ import xyz.breadloaf.replaymodinterface.mixin.accessor.ConnectionEventHandlerAcc
 
 import javax.annotation.Nullable;
 
-
 public class ReplayInterface implements ClientModInitializer {
     public static Logger logger = LogManager.getLogger("ReplayInterface");
     public static ReplayInterface INSTANCE;
     public boolean isInReplayEditor;
     @Nullable
     public ReplayHandler replayHandler;
+    public boolean skipping;
 
     public ReplayInterface() {
         if (INSTANCE == null) {
             INSTANCE = this;
         }
-
     }
+
     @Override
     public void onInitializeClient() {
         /*KeyMapping keyBinding = KeyBindingHelper.registerKeyBinding(new KeyMapping(
@@ -49,13 +49,12 @@ public class ReplayInterface implements ClientModInitializer {
 
     //Check if replay mod is active (IE loaded at world load)
     public boolean isReplayModActive() {
-        return ((ConnectionEventHandlerAccessor)ReplayModRecording.instance.getConnectionEventHandler()).getRecordingEventHandler() != null;
+        return ((ConnectionEventHandlerAccessor) ReplayModRecording.instance.getConnectionEventHandler()).getRecordingEventHandler() != null;
     }
 
-
     //Adds a fake packet into recording data
-    public void sendFakePacket(ResourceLocation resourceLocation,FriendlyByteBuf packetData) {
-        ClientboundCustomPayloadPacket packet = new ClientboundCustomPayloadPacket(resourceLocation,packetData);
+    public void sendFakePacket(ResourceLocation resourceLocation, FriendlyByteBuf packetData) {
+        ClientboundCustomPayloadPacket packet = new ClientboundCustomPayloadPacket(resourceLocation, packetData);
         sendFakePacket(packet);
     }
 
