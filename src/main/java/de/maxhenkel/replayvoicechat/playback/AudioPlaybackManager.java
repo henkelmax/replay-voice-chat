@@ -30,7 +30,9 @@ public class AudioPlaybackManager {
     }
 
     public void onEntitySound(EntitySoundPacket packet) {
-
+        if (ReplayInterface.INSTANCE.skipping) {
+            return;
+        }
         ClientEntityAudioChannel channel = entityAudioChannels.get(packet.getId());
         if (channel == null) {
             channel = ReplayVoicechatPlugin.CLIENT_API.createEntityAudioChannel(packet.getId());
@@ -40,7 +42,9 @@ public class AudioPlaybackManager {
     }
 
     public void onLocationalSound(LocationalSoundPacket packet) {
-
+        if (ReplayInterface.INSTANCE.skipping) {
+            return;
+        }
         ClientLocationalAudioChannel channel = locationalAudioChannels.get(packet.getId());
         if (channel == null) {
             channel = ReplayVoicechatPlugin.CLIENT_API.createLocationalAudioChannel(packet.getId(), packet.getLocation());
@@ -52,7 +56,9 @@ public class AudioPlaybackManager {
     }
 
     public void onStaticSound(StaticSoundPacket packet) {
-
+        if (ReplayInterface.INSTANCE.skipping) {
+            return;
+        }
         ClientStaticAudioChannel channel = staticAudioChannels.get(packet.getId());
         if (channel == null) {
             channel = ReplayVoicechatPlugin.CLIENT_API.createStaticAudioChannel(packet.getId());

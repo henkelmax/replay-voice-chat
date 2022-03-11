@@ -5,7 +5,6 @@ import de.maxhenkel.replayvoicechat.net.LocationalSoundPacket;
 import de.maxhenkel.replayvoicechat.net.Packet;
 import de.maxhenkel.replayvoicechat.net.StaticSoundPacket;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import xyz.breadloaf.replaymodinterface.ReplayInterface;
 
 public class NetManager {
 
@@ -21,9 +20,6 @@ public class NetManager {
             T dummyPacket = packetClass.getDeclaredConstructor().newInstance();
             ClientPlayNetworking.registerGlobalReceiver(dummyPacket.getIdentifier(), (client, handler, buf, responseSender) -> {
                 try {
-                    if  (ReplayInterface.INSTANCE.replayHandler != null && !ReplayInterface.INSTANCE.replayHandler.getReplaySender().isAsyncMode()) {
-                        return;
-                    }
                     T packet = packetClass.getDeclaredConstructor().newInstance();
                     packet.fromBytes(buf);
                     client.execute(packet::onPacket);
