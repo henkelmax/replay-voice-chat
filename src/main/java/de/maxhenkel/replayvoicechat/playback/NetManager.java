@@ -19,7 +19,7 @@ public class NetManager {
     public static <T extends Packet<?>> void registerPacket(Class<T> packetClass) {
         try {
             T dummyPacket = packetClass.getDeclaredConstructor().newInstance();
-            ClientPlayNetworking.registerGlobalReceiver(dummyPacket.getIdentifier(), (client, handler, buf, responseSender) -> {
+              ClientPlayNetworking.registerGlobalReceiver(dummyPacket.getIdentifier(), (client, handler, buf, responseSender) -> {
                 try {
                     if (ReplayInterface.INSTANCE.skipping) {
                         return;
