@@ -1,18 +1,13 @@
 package xyz.breadloaf.replaymodinterface.modules;
 
-import com.mojang.blaze3d.platform.InputConstants;
 import com.replaymod.core.KeyBindingRegistry;
 import com.replaymod.core.Module;
-import com.replaymod.recording.ReplayModRecording;
-import com.replaymod.recording.packet.PacketListener;
-import io.netty.buffer.Unpooled;
-import net.fabricmc.fabric.api.client.keybinding.FabricKeyBinding;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
-import org.lwjgl.glfw.GLFW;
+import com.replaymod.lib.de.johni0702.minecraft.gui.utils.EventRegistrations;
+import com.replaymod.replay.events.ReplayClosingCallback;
+import com.replaymod.replay.events.ReplayOpenedCallback;
 import xyz.breadloaf.replaymodinterface.ReplayInterface;
 
-public class VoicechatModule implements Module {
+public class VoicechatModule extends EventRegistrations implements Module {
     @Override
     public void initCommon() {
         ReplayInterface.logger.info("ReplayModModule initCommon");
@@ -21,6 +16,15 @@ public class VoicechatModule implements Module {
     @Override
     public void initClient() {
         ReplayInterface.logger.info("ReplayModModule initClient");
+        on(ReplayOpenedCallback.EVENT,replayHandler -> {
+            ReplayInterface.logger.info("ReplayOpenedCallback");
+            ReplayInterface.INSTANCE.isInReplayEditor = true;
+        });
+        on(ReplayClosingCallback.EVENT, replayHandler -> {
+            ReplayInterface.logger.info("ReplayClosingCallback");
+            ReplayInterface.INSTANCE.isInReplayEditor = false;
+        });
+        register();
     }
 
     @Override
@@ -28,3 +32,4 @@ public class VoicechatModule implements Module {
         ReplayInterface.logger.info("ReplayModModule registerKeybinds");
     }
 }
+

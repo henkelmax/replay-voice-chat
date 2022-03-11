@@ -1,15 +1,15 @@
 package de.maxhenkel.replayvoicechat;
 
+import de.maxhenkel.replayvoicechat.playback.AudioPlaybackManager;
 import de.maxhenkel.replayvoicechat.recording.VoicechatRecorder;
 import de.maxhenkel.voicechat.api.VoicechatApi;
 import de.maxhenkel.voicechat.api.VoicechatClientApi;
 import de.maxhenkel.voicechat.api.VoicechatPlugin;
 import de.maxhenkel.voicechat.api.events.*;
-import de.maxhenkel.voicechat.plugins.impl.VoicechatClientApiImpl;
 
 public class ReplayVoicechatPlugin implements VoicechatPlugin {
 
-    public static VoicechatClientApi CLIENT_API = new VoicechatClientApiImpl();
+    public static VoicechatClientApi CLIENT_API = null;
 
     @Override
     public String getPluginId() {
@@ -18,7 +18,7 @@ public class ReplayVoicechatPlugin implements VoicechatPlugin {
 
     @Override
     public void initialize(VoicechatApi api) {
-
+        CLIENT_API = (VoicechatClientApi) api;
     }
 
     @Override
@@ -28,6 +28,7 @@ public class ReplayVoicechatPlugin implements VoicechatPlugin {
         registration.registerEvent(ClientReceiveSoundEvent.LocationalSound.class, VoicechatRecorder::onLocationalSound);
         registration.registerEvent(ClientReceiveSoundEvent.StaticSound.class, VoicechatRecorder::onStaticSound);
         registration.registerEvent(ClientSoundEvent.class, VoicechatRecorder::onSound);
+        registration.registerEvent(OpenALSoundEvent.class, AudioPlaybackManager::setPlaybackRate);
     }
 
     private void onConnection(ClientVoicechatConnectionEvent event) {

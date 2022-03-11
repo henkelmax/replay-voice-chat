@@ -1,27 +1,25 @@
 package xyz.breadloaf.replaymodinterface;
 
-import com.mojang.blaze3d.platform.InputConstants;
-import com.replaymod.core.KeyBindingRegistry;
 import com.replaymod.recording.ReplayModRecording;
-import io.netty.buffer.Unpooled;
+import com.replaymod.replay.ReplayHandler;
 import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
-import net.minecraft.client.KeyMapping;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundCustomPayloadPacket;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.lwjgl.glfw.GLFW;
 import xyz.breadloaf.replaymodinterface.mixin.accessor.ConnectionEventHandlerAccessor;
+
+import javax.annotation.Nullable;
 
 
 public class ReplayInterface implements ClientModInitializer {
     public static Logger logger = LogManager.getLogger("ReplayInterface");
     public static ReplayInterface INSTANCE;
+    public boolean isInReplayEditor;
+    @Nullable
+    public ReplayHandler replayHandler;
 
     public ReplayInterface() {
         if (INSTANCE == null) {
@@ -31,8 +29,6 @@ public class ReplayInterface implements ClientModInitializer {
     }
     @Override
     public void onInitializeClient() {
-        logger.info("Hello World!");
-
         /*KeyMapping keyBinding = KeyBindingHelper.registerKeyBinding(new KeyMapping(
                 "key.examplemod.spook", // The translation key of the keybinding's name
                 InputConstants.Type.KEYSYM, // The type of the keybinding, KEYSYM for keyboard, MOUSE for mouse.
@@ -68,5 +64,6 @@ public class ReplayInterface implements ClientModInitializer {
             ReplayModRecording.instance.getConnectionEventHandler().getPacketListener().save(packet);
         }
     }
+
 
 }
