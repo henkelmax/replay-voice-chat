@@ -19,7 +19,6 @@ public class ReplayInterface implements ClientModInitializer {
     public boolean isInReplayEditor;
     @Nullable
     public ReplayHandler replayHandler;
-    public boolean skipping;
 
     public ReplayInterface() {
         if (INSTANCE == null) {
