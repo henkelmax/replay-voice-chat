@@ -30,6 +30,8 @@ public class ReplayInterface implements ClientModInitializer {
     public ReplayHandler replayHandler;
     public boolean skipping;
     public boolean isRendering;
+    @Nullable
+    public VideoRenderer videoRenderer;
 
     public ReplayInterface() {
         if (INSTANCE == null) {
