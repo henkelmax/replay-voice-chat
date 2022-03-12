@@ -7,8 +7,11 @@
     "FullReplaySenderMixin",
     "InitMixin",
     "ReplayHandlerMixin",
+    "VideoRendererMixin",
     "accessor.ConnectionEventHandlerAccessor",
-    "accessor.ReplayHandlerAccessor"
+    "accessor.FullReplaySenderAccessor",
+    "accessor.ReplayHandlerAccessor",
+    "accessor.VideoRendererAccessor"
   ],
   "client": [
   ],

@@ -23,9 +23,9 @@ public class VoicechatVoiceRenderer extends Thread{
     private static VoicechatVoiceRenderer INSTANCE;
     private static InitializationData data;
 
-    public static void onStartRendering() {
+    public static void onStartRendering(int initialTimestamp) {
         if (INSTANCE == null) {
-            INSTANCE = new VoicechatVoiceRenderer();
+            INSTANCE = new VoicechatVoiceRenderer(initialTimestamp);
             INSTANCE.startRecording();
         } else {
             throw new IllegalStateException("Start called while started");
@@ -47,14 +47,12 @@ public class VoicechatVoiceRenderer extends Thread{
     }
 
     public static void onRecordingPacket(ClientboundCustomPayloadPacket packet, int timestamp, Vec3 cameraLocation, float cameraYRot) {
-        if (INSTANCE != null && INSTANCE.running) {
+        if (INSTANCE != null && INSTANCE.running && INSTANCE.initialTimestamp <= timestamp) {
             try {
                 INSTANCE.packets.put(new PacketWrapper(packet,timestamp,cameraYRot,cameraLocation));
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-        } else {
-            throw new IllegalStateException("packet recorded when recording stopped/not started");
         }
     }
 
@@ -67,13 +65,14 @@ public class VoicechatVoiceRenderer extends Thread{
     private AudioRecorder recorder;
     private int initialTimestamp;
 
-    private VoicechatVoiceRenderer(){
+    private VoicechatVoiceRenderer(int initialTimestamp){
         packets = new LinkedBlockingQueue<>();
+        this.initialTimestamp = initialTimestamp;
         setName("ReplayVoiceChatVoiceRenderThread");
     }
 
     private void startRecording() {
-        recorder = new AudioRecorder(Minecraft.getInstance().gameDirectory.toPath().resolve("test_recording"),0L);
+        recorder = new AudioRecorder(Minecraft.getInstance().gameDirectory.toPath().resolve("test_recording"),initialTimestamp);
         start();
     }
 
