@@ -29,6 +29,7 @@ public class AudioPlaybackManager {
         staticAudioChannels = new HashMap<>();
     }
 
+    //TODO close audio channel from other list if uuid switches to other type
     public void onEntitySound(EntitySoundPacket packet) {
 
         ClientEntityAudioChannel channel = entityAudioChannels.get(packet.getId());

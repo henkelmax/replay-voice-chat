@@ -7,6 +7,7 @@ import java.util.UUID;
 
 public abstract class AbstractSoundPacket<T extends Packet<T>> implements Packet<T> {
 
+    //TODO versioning
     private UUID id;
     private short[] rawAudio;
 
