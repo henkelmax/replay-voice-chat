@@ -8,11 +8,13 @@ import de.maxhenkel.replayvoicechat.ReplayVoicechat;
 import de.maxhenkel.replayvoicechat.rendering.VoicechatVoiceRenderer;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.api.ClientModInitializer;
+import net.minecraft.client.Minecraft;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundCustomPayloadPacket;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.phys.Vec3;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import xyz.breadloaf.replaymodinterface.imsosorry.PacketData;
@@ -82,7 +84,11 @@ public class ReplayInterface implements ClientModInitializer {
             buf.readVarInt(); //we just need to advance this so we dont try and parse the id as a resourcelocation
             ClientboundCustomPayloadPacket customPayloadPacket = new ClientboundCustomPayloadPacket(buf);
             if (customPayloadPacket.getIdentifier().getNamespace().equals(ReplayVoicechat.MOD_ID)) {
-                VoicechatVoiceRenderer.onRecordingPacket(customPayloadPacket, pd.timestamp);
+                if (Minecraft.getInstance().cameraEntity != null) {
+                    Vec3 cameraLocation =  Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
+                    float yrot = Minecraft.getInstance().gameRenderer.getMainCamera().getYRot();
+                    VoicechatVoiceRenderer.onRecordingPacket(customPayloadPacket, pd.timestamp,cameraLocation,yrot);
+                }
                 return false; //stop this packet being sent
             }
         }

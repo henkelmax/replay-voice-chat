@@ -2,6 +2,7 @@ package de.maxhenkel.replayvoicechat.mixin;
 
 import de.maxhenkel.replayvoicechat.ReplayVoicechat;
 import de.maxhenkel.replayvoicechat.net.FakeVoicechatConnection;
+import de.maxhenkel.replayvoicechat.rendering.VoicechatVoiceRenderer;
 import de.maxhenkel.voicechat.net.SecretPacket;
 import de.maxhenkel.voicechat.voice.client.ClientManager;
 import de.maxhenkel.voicechat.voice.client.ClientVoicechat;
@@ -30,7 +31,9 @@ public class ClientManagerMixin {
         ReplayVoicechat.LOGGER.info("Fake auth");
         if (this.client != null) {
             try {
-                ((ClientVoicechatAccessor) this.client).setConnection(new FakeVoicechatConnection(client,new InitializationData("127.0.0.1",secretPacket)));
+                InitializationData initializationData = new InitializationData("127.0.0.1",secretPacket);
+                VoicechatVoiceRenderer.onInitializationData(initializationData);
+                ((ClientVoicechatAccessor) this.client).setConnection(new FakeVoicechatConnection(client,initializationData));
                 ((ClientVoicechatAccessor) this.client).getConnection().start();
             } catch (IOException e) {
                 e.printStackTrace();
