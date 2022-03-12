@@ -11,17 +11,19 @@ import de.maxhenkel.voicechat.voice.client.InitializationData;
 import de.maxhenkel.voicechat.voice.client.PositionalAudioUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.protocol.game.ClientboundCustomPayloadPacket;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 
+import javax.annotation.Nullable;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.IOException;
-import java.util.UUID;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-public class VoicechatVoiceRenderer extends Thread{
+public class VoicechatVoiceRenderer extends Thread {
     private static VoicechatVoiceRenderer INSTANCE;
     private static InitializationData data;
+    private static final Minecraft MC = Minecraft.getInstance();
 
     public static void onStartRendering(int initialTimestamp) {
         if (INSTANCE == null) {
@@ -49,7 +51,7 @@ public class VoicechatVoiceRenderer extends Thread{
     public static void onRecordingPacket(ClientboundCustomPayloadPacket packet, int timestamp, Vec3 cameraLocation, float cameraYRot) {
         if (INSTANCE != null && INSTANCE.running && INSTANCE.initialTimestamp <= timestamp) {
             try {
-                INSTANCE.packets.put(new PacketWrapper(packet,timestamp,cameraYRot,cameraLocation));
+                INSTANCE.packets.put(new PacketWrapper(packet, timestamp, cameraYRot, cameraLocation));
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -61,18 +63,18 @@ public class VoicechatVoiceRenderer extends Thread{
     }
 
     private boolean running = true;
-    private LinkedBlockingQueue<PacketWrapper> packets;
+    private final LinkedBlockingQueue<PacketWrapper> packets;
     private AudioRecorder recorder;
-    private int initialTimestamp;
+    private final int initialTimestamp;
 
-    private VoicechatVoiceRenderer(int initialTimestamp){
+    private VoicechatVoiceRenderer(int initialTimestamp) {
         packets = new LinkedBlockingQueue<>();
         this.initialTimestamp = initialTimestamp;
         setName("ReplayVoiceChatVoiceRenderThread");
     }
 
     private void startRecording() {
-        recorder = new AudioRecorder(Minecraft.getInstance().gameDirectory.toPath().resolve("test_recording"),initialTimestamp);
+        recorder = new AudioRecorder(Minecraft.getInstance().gameDirectory.toPath().resolve("test_recording"), initialTimestamp);
         start();
     }
 
@@ -87,7 +89,7 @@ public class VoicechatVoiceRenderer extends Thread{
             }
 
             if (packetWrapper != null) {
-                AbstractSoundPacket soundPacket;
+                AbstractSoundPacket<?> soundPacket;
                 if (packetWrapper.packet.getIdentifier().equals(LocationalSoundPacket.ID)) {
                     soundPacket = new LocationalSoundPacket();
                     soundPacket.fromBytes(packetWrapper.packet.getData());
@@ -107,34 +109,51 @@ public class VoicechatVoiceRenderer extends Thread{
     }
 
     private void onLocationalSoundPacket(PacketWrapper packetWrapper, LocationalSoundPacket locationalSoundPacket) {
-        Position location = locationalSoundPacket.getLocation();
-        short[] rawaudio = locationalSoundPacket.getRawAudio();
-        UUID uuid = locationalSoundPacket.getId();
         try {
-            recorder.appendChunk(uuid, packetWrapper.timestamp, monoTo3DStereo(
-                    rawaudio,
-                    new Vec3(
-                            location.getX(),
-                            location.getY(),
-                            location.getZ()
-                    ),
-                    packetWrapper.cameraPos,
-                    packetWrapper.yrot));
+            Position location = locationalSoundPacket.getLocation();
+            recorder.appendChunk(locationalSoundPacket.getId(), packetWrapper.timestamp,
+                    PositionalAudioUtils.convertToStereoForRecording(
+                            data,
+                            packetWrapper.cameraPos,
+                            packetWrapper.yrot,
+                            new Vec3(location.getX(), location.getY(), location.getZ()),
+                            locationalSoundPacket.getRawAudio(),
+                            1F
+                    ));
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     private void onEntitySoundPacket(PacketWrapper packetWrapper, EntitySoundPacket entitySoundPacket) {
+        try {
+            @Nullable Player player = MC.level.getPlayerByUUID(entitySoundPacket.getId());
+            Vec3 pos = player.getEyePosition();
 
+            float crouchMultiplayer = player.isCrouching() ? (float) data.getCrouchDistanceMultiplier() : 1F;
+            float whisperMultiplayer = entitySoundPacket.isWhispering() ? (float) data.getWhisperDistanceMultiplier() : 1F;
+            float multiplier = crouchMultiplayer * whisperMultiplayer;
+
+            recorder.appendChunk(entitySoundPacket.getId(), packetWrapper.timestamp,
+                    PositionalAudioUtils.convertToStereoForRecording(
+                            data,
+                            packetWrapper.cameraPos,
+                            packetWrapper.yrot,
+                            pos,
+                            entitySoundPacket.getRawAudio(),
+                            multiplier
+                    ));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
+
     private void onStaticSoundPacket(PacketWrapper packetWrapper, StaticSoundPacket staticSoundPacket) {
-
-    }
-
-    private short[] monoTo3DStereo(short[] rawaudio,Vec3 position, Vec3 cameraPos, float yRot) {
-        //ReplayVoicechat.LOGGER.info(cameraPos.toString() + " :: "+ yRot);
-        return PositionalAudioUtils.convertToStereoForRecording(data,cameraPos,yRot,position,rawaudio,1.0f);
+        try {
+            recorder.appendChunk(staticSoundPacket.getId(), packetWrapper.timestamp, PositionalAudioUtils.convertToStereo(staticSoundPacket.getRawAudio()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void stopAndWait() throws InterruptedException {
@@ -144,10 +163,9 @@ public class VoicechatVoiceRenderer extends Thread{
     }
 
     private void onStop() {
-
         try {
             recorder.convert((progress) -> {
-                ReplayVoicechat.LOGGER.info("Saving voicechat: "+String.valueOf(progress*100.0F)+"%");
+                ReplayVoicechat.LOGGER.info("Saving voicechat: " + progress * 100F + "%");
             });
         } catch (UnsupportedAudioFileException | IOException e) {
             e.printStackTrace();
@@ -160,6 +178,7 @@ public class VoicechatVoiceRenderer extends Thread{
         public int timestamp;
         public float yrot;
         public Vec3 cameraPos;
+
         public PacketWrapper(ClientboundCustomPayloadPacket packet, int timestamp, float yrot, Vec3 cameraPos) {
             this.packet = packet;
             this.timestamp = timestamp;

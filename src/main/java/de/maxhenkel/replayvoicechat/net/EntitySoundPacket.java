@@ -27,6 +27,10 @@ public class EntitySoundPacket extends AbstractSoundPacket<EntitySoundPacket> {
         return ID;
     }
 
+    public boolean isWhispering() {
+        return whispering;
+    }
+
     @Override
     public EntitySoundPacket fromBytes(FriendlyByteBuf buf) {
         super.fromBytes(buf);
