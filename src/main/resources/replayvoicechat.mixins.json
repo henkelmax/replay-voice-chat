@@ -5,9 +5,11 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "ClientManagerMixin",
+    "ClientPlayerStateManagerMixin",
     "ClientVoicechatAccessor",
     "ClientVoicechatMixin",
     "GroupChatManagerMixin",
+    "InitializationDataMixin",
     "RenderEventsMixin"
   ],
   "injectors": {

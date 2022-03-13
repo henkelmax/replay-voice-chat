@@ -20,27 +20,26 @@ import java.io.IOException;
 @Mixin(value = ClientManager.class, remap = false)
 public class ClientManagerMixin {
 
-    @Shadow @Nullable private ClientVoicechat client;
+    @Shadow
+    @Nullable
+    private ClientVoicechat client;
 
-    //TODO
     @Inject(method = "authenticate", at = @At(value = "HEAD"), cancellable = true)
     private void connect(SecretPacket secretPacket, CallbackInfo ci) {
         if (!ReplayInterface.INSTANCE.isInReplayEditor) {
             return;
         }
-        ReplayVoicechat.LOGGER.info("Fake auth");
+        ReplayVoicechat.LOGGER.info("Fake authentication");
         if (this.client != null) {
             try {
-                InitializationData initializationData = new InitializationData("127.0.0.1",secretPacket);
+                InitializationData initializationData = new InitializationData("127.0.0.1", secretPacket);
                 VoicechatVoiceRenderer.onInitializationData(initializationData);
-                ((ClientVoicechatAccessor) this.client).setConnection(new FakeVoicechatConnection(client,initializationData));
+                ((ClientVoicechatAccessor) this.client).setConnection(new FakeVoicechatConnection(client, initializationData));
                 ((ClientVoicechatAccessor) this.client).getConnection().start();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
         ci.cancel();
-        //TODO only when in replay!!!
-
     }
 }
