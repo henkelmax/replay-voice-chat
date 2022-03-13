@@ -210,6 +210,7 @@ public class VoicechatVoiceRenderer extends Thread {
         } catch (UnsupportedAudioFileException | IOException e) {
             e.printStackTrace();
         }
+        ReplayVoicechat.LOGGER.info("Voicechat data saved!");
         recorder.close();
     }
 

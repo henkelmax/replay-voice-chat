@@ -48,22 +48,7 @@ public class ReplayInterface implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        /*KeyMapping keyBinding = KeyBindingHelper.registerKeyBinding(new KeyMapping(
-                "key.examplemod.spook", // The translation key of the keybinding's name
-                InputConstants.Type.KEYSYM, // The type of the keybinding, KEYSYM for keyboard, MOUSE for mouse.
-                GLFW.GLFW_KEY_R, // The keycode of the key
-                "category.examplemod.test" // The translation key of the keybinding's category.
-        ));
 
-        ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            if (keyBinding.isDown() && System.currentTimeMillis() - lastKeyPress  >= 20) {
-                client.player.sendMessage(new TextComponent("Key 1 was pressed!"), null);
-                for (int i = 0; i<= 200; i++) {
-                    ReplayInterface.INSTANCE.sendFakePacket(new ResourceLocation("svcreplaymod","audiochannel"),new FriendlyByteBuf(Unpooled.buffer()));
-                }
-                lastKeyPress = System.currentTimeMillis();
-            }
-        });*/
     }
 
     //Check if replay mod is active (IE loaded at world load)
@@ -82,27 +67,6 @@ public class ReplayInterface implements ClientModInitializer {
             ReplayModRecording.instance.getConnectionEventHandler().getPacketListener().save(packet);
         }
     }
-
-    /*public static boolean injectedPacketSendCheck(PacketData pd) {
-        //we use fake plugin message packets to pack voicechat data
-        if (!INSTANCE.isRendering) {
-            return true;
-        }
-        if (pd.packet.getType() == PacketType.PluginMessage) {
-            FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.wrappedBuffer(pd.bytes));
-            buf.readVarInt(); //we just need to advance this so we dont try and parse the id as a resourcelocation
-            ClientboundCustomPayloadPacket customPayloadPacket = new ClientboundCustomPayloadPacket(buf);
-            if (customPayloadPacket.getIdentifier().getNamespace().equals(ReplayVoicechat.MOD_ID)) {
-                if (Minecraft.getInstance().cameraEntity != null) {
-                    Vec3 cameraLocation = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
-                    float yrot = Minecraft.getInstance().gameRenderer.getMainCamera().getYRot();
-                    //VoicechatVoiceRenderer.onRecordingPacket(customPayloadPacket, pd.timestamp, cameraLocation, yrot);
-                }
-                return false; //stop this packet being sent
-            }
-        }
-        return true;
-    }*/
 
     public static double getCurrentSpeed() {
         ReplayHandler replayHandler = INSTANCE.replayHandler;

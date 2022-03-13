@@ -12,27 +12,21 @@ import xyz.breadloaf.replaymodinterface.ReplayInterface;
 public class VoicechatModule extends EventRegistrations implements Module {
     @Override
     public void initCommon() {
-        ReplayInterface.logger.info("ReplayModModule initCommon");
     }
 
     @Override
     public void initClient() {
-        ReplayInterface.logger.info("ReplayModModule initClient");
         on(ReplayOpenedCallback.EVENT,replayHandler -> {
-            ReplayInterface.logger.info("ReplayOpenedCallback");
             ReplayInterface.INSTANCE.isInReplayEditor = true;
         });
         on(ReplayClosingCallback.EVENT, replayHandler -> {
-            ReplayInterface.logger.info("ReplayClosingCallback");
             ReplayInterface.INSTANCE.isInReplayEditor = false;
         });
         on(ReplayRenderCallback.Pre.EVENT, videoRenderer -> {
-            ReplayInterface.logger.info("ReplayRenderCallback/Pre");
             ReplayInterface.INSTANCE.isRendering = true;
             ReplayInterface.INSTANCE.videoRenderer = videoRenderer;
         });
         on(ReplayRenderCallback.Post.EVENT, videoRenderer -> {
-            ReplayInterface.logger.info("ReplayRenderCallback/Post");
             ReplayInterface.INSTANCE.isRendering = false;
             VoicechatVoiceRenderer.onStopRendering();
             ReplayInterface.INSTANCE.videoRenderer = null;
@@ -42,7 +36,6 @@ public class VoicechatModule extends EventRegistrations implements Module {
 
     @Override
     public void registerKeyBindings(KeyBindingRegistry registry) {
-        ReplayInterface.logger.info("ReplayModModule registerKeybinds");
     }
 }
 
