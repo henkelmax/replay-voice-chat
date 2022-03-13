@@ -6,6 +6,7 @@
   "mixins": [
     "ClientManagerMixin",
     "ClientVoicechatAccessor",
+    "ClientVoicechatMixin",
     "GroupChatManagerMixin",
     "RenderEventsMixin"
   ],
