@@ -10,6 +10,7 @@
     "VideoRendererMixin",
     "accessor.ConnectionEventHandlerAccessor",
     "accessor.FullReplaySenderAccessor",
+    "accessor.GuiPathingAccessor",
     "accessor.ReplayHandlerAccessor",
     "accessor.VideoRendererAccessor"
   ],

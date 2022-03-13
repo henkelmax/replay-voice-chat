@@ -74,7 +74,7 @@ public class AudioPlaybackManager {
         //TODO: need a better way of setting speed this does not handle very slow or very fast well at all
         // also maybe we can do this without pitch shifting audio? (have to write resample function?)
         if (ReplayInterface.INSTANCE.isInReplayEditor) {
-            AL11.alSourcef(event.getSource(), AL11.AL_PITCH, (float) ReplayInterface.INSTANCE.replayHandler.getReplaySender().getReplaySpeed());
+            AL11.alSourcef(event.getSource(), AL11.AL_PITCH, (float) ReplayInterface.getCurrentSpeed());
         }
     }
 }
