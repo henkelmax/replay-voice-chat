@@ -70,7 +70,7 @@ public class VoicechatVoiceRenderer extends Thread {
     private final LinkedBlockingQueue<PacketWrapper> packets;
     private AudioRecorder recorder;
     private final int initialTimestamp;
-    private HashMap<UUID,Sonic> sonicMap;
+    private final HashMap<UUID, Sonic> sonicMap;
 
     private VoicechatVoiceRenderer(int initialTimestamp) {
         packets = new LinkedBlockingQueue<>();
@@ -80,7 +80,8 @@ public class VoicechatVoiceRenderer extends Thread {
     }
 
     private void startRecording() {
-        String filename = ReplayInterface.INSTANCE.videoRenderer.getRenderSettings().getOutputFile().getName().split("\\.")[0];
+        String videoFileName = ReplayInterface.INSTANCE.videoRenderer.getRenderSettings().getOutputFile().getName();
+        String filename = videoFileName.substring(0, videoFileName.lastIndexOf('.'));
         Path path = ReplayInterface.INSTANCE.videoRenderer.getRenderSettings().getOutputFile().toPath().getParent().resolve(filename + "_audio");
         recorder = new AudioRecorder(path, initialTimestamp);
         start();
@@ -129,7 +130,7 @@ public class VoicechatVoiceRenderer extends Thread {
                             packetWrapper.cameraPos,
                             packetWrapper.yrot,
                             new Vec3(location.getX(), location.getY(), location.getZ()),
-                            setSpeed(locationalSoundPacket.getId(),locationalSoundPacket.getRawAudio(), packetWrapper.speed),
+                            setSpeed(locationalSoundPacket.getId(), locationalSoundPacket.getRawAudio(), packetWrapper.speed),
                             1F
                     ));
         } catch (IOException e) {
@@ -152,7 +153,7 @@ public class VoicechatVoiceRenderer extends Thread {
                             packetWrapper.cameraPos,
                             packetWrapper.yrot,
                             pos,
-                            setSpeed(entitySoundPacket.getId(),entitySoundPacket.getRawAudio(), packetWrapper.speed),
+                            setSpeed(entitySoundPacket.getId(), entitySoundPacket.getRawAudio(), packetWrapper.speed),
                             multiplier
                     ));
         } catch (IOException e) {
@@ -162,7 +163,7 @@ public class VoicechatVoiceRenderer extends Thread {
 
     private void onStaticSoundPacket(PacketWrapper packetWrapper, StaticSoundPacket staticSoundPacket) {
         try {
-            recorder.appendChunk(staticSoundPacket.getId(), packetWrapper.timestamp, PositionalAudioUtils.convertToStereo(setSpeed(staticSoundPacket.getId(),staticSoundPacket.getRawAudio(), packetWrapper.speed)));
+            recorder.appendChunk(staticSoundPacket.getId(), packetWrapper.timestamp, PositionalAudioUtils.convertToStereo(setSpeed(staticSoundPacket.getId(), staticSoundPacket.getRawAudio(), packetWrapper.speed)));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -172,7 +173,7 @@ public class VoicechatVoiceRenderer extends Thread {
         Sonic stream;
         if (!sonicMap.containsKey(channelId)) {
             stream = new Sonic(SoundManager.SAMPLE_RATE, 1);
-            sonicMap.put(channelId,stream);
+            sonicMap.put(channelId, stream);
         } else {
             stream = sonicMap.get(channelId);
         }
