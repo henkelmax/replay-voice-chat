@@ -2,10 +2,12 @@ package de.maxhenkel.replayvoicechat.rendering;
 
 import de.maxhenkel.replayvoicechat.ReplayVoicechat;
 import de.maxhenkel.replayvoicechat.net.*;
+import de.maxhenkel.sonic.Sonic;
 import de.maxhenkel.voicechat.api.Position;
 import de.maxhenkel.voicechat.voice.client.AudioRecorder;
 import de.maxhenkel.voicechat.voice.client.InitializationData;
 import de.maxhenkel.voicechat.voice.client.PositionalAudioUtils;
+import de.maxhenkel.voicechat.voice.client.SoundManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.protocol.game.ClientboundCustomPayloadPacket;
 import net.minecraft.world.entity.player.Player;
@@ -50,7 +52,7 @@ public class VoicechatVoiceRenderer extends Thread {
     public static void onRecordingPacket(ClientboundCustomPayloadPacket packet, int timestamp, Vec3 cameraLocation, float cameraYRot) {
         if (INSTANCE != null && INSTANCE.running && INSTANCE.initialTimestamp <= timestamp) {
             try {
-                INSTANCE.packets.put(new PacketWrapper(packet, timestamp, cameraYRot, cameraLocation));
+                INSTANCE.packets.put(new PacketWrapper(packet, timestamp, cameraYRot, cameraLocation, ReplayInterface.getCurrentSpeed()));
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -122,7 +124,7 @@ public class VoicechatVoiceRenderer extends Thread {
                             packetWrapper.cameraPos,
                             packetWrapper.yrot,
                             new Vec3(location.getX(), location.getY(), location.getZ()),
-                            locationalSoundPacket.getRawAudio(),
+                            setSpeed(locationalSoundPacket.getRawAudio(), packetWrapper.speed),
                             1F
                     ));
         } catch (IOException e) {
@@ -145,7 +147,7 @@ public class VoicechatVoiceRenderer extends Thread {
                             packetWrapper.cameraPos,
                             packetWrapper.yrot,
                             pos,
-                            entitySoundPacket.getRawAudio(),
+                            setSpeed(entitySoundPacket.getRawAudio(), packetWrapper.speed),
                             multiplier
                     ));
         } catch (IOException e) {
@@ -155,10 +157,21 @@ public class VoicechatVoiceRenderer extends Thread {
 
     private void onStaticSoundPacket(PacketWrapper packetWrapper, StaticSoundPacket staticSoundPacket) {
         try {
-            recorder.appendChunk(staticSoundPacket.getId(), packetWrapper.timestamp, PositionalAudioUtils.convertToStereo(staticSoundPacket.getRawAudio()));
+            recorder.appendChunk(staticSoundPacket.getId(), packetWrapper.timestamp, PositionalAudioUtils.convertToStereo(setSpeed(staticSoundPacket.getRawAudio(), packetWrapper.speed)));
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public short[] setSpeed(short[] audio, double speed) {
+        Sonic stream = new Sonic(SoundManager.SAMPLE_RATE, 1);
+        stream.setSpeed((float) speed);
+        stream.writeShortToStream(audio, audio.length);
+        stream.flushStream();
+        int numSamples = stream.samplesAvailable();
+        short[] outSamples = new short[numSamples];
+        stream.readShortFromStream(outSamples, numSamples);
+        return outSamples;
     }
 
     private void stopAndWait() throws InterruptedException {
@@ -183,12 +196,14 @@ public class VoicechatVoiceRenderer extends Thread {
         public int timestamp;
         public float yrot;
         public Vec3 cameraPos;
+        public double speed;
 
-        public PacketWrapper(ClientboundCustomPayloadPacket packet, int timestamp, float yrot, Vec3 cameraPos) {
+        public PacketWrapper(ClientboundCustomPayloadPacket packet, int timestamp, float yrot, Vec3 cameraPos, double speed) {
             this.packet = packet;
             this.timestamp = timestamp;
             this.cameraPos = cameraPos;
             this.yrot = yrot;
+            this.speed = speed;
         }
     }
 }

@@ -1,5 +1,6 @@
 plugins {
     id 'fabric-loom' version '0.11-SNAPSHOT'
+    id 'com.github.johnrengelman.shadow' version '7.1.0'
 }
 
 sourceCompatibility = JavaLanguageVersion.of(java_version as int)
@@ -40,6 +41,9 @@ dependencies {
 
     implementation "de.maxhenkel.voicechat:voicechat-api:${voicechat_api_version}"
 
+    implementation "de.maxhenkel.sonic:sonic:1.0.0-SNAPSHOT"
+    shadow "de.maxhenkel.sonic:sonic:1.0.0-SNAPSHOT"
+
 //    modRuntimeOnly "maven.modrinth:simple-voice-chat:fabric-${voicechat_dependency}"
 
     modImplementation fileTree(dir: 'libs', include: '*.jar')
@@ -71,4 +75,18 @@ jar {
     from("LICENSE") {
         rename { "${it}_${project.archivesBaseName}" }
     }
+}
+
+shadowJar {
+    configurations = [project.configurations.shadow]
+    classifier 'shadow-dev'
+    relocate 'de.maxhenkel.sonic', "de.maxhenkel.${archives_base_name}.sonic"
+}
+
+remapJar {
+    input.set shadowJar.archiveFile.get()
+}
+
+prepareRemapJar {
+    dependsOn shadowJar
 }
