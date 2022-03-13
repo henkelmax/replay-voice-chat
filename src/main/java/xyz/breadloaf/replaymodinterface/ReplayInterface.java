@@ -11,7 +11,6 @@ import com.replaymod.replaystudio.pathing.path.Timeline;
 import com.replaymod.replaystudio.protocol.PacketType;
 import com.replaymod.simplepathing.ReplayModSimplePathing;
 import de.maxhenkel.replayvoicechat.ReplayVoicechat;
-import de.maxhenkel.replayvoicechat.rendering.VoicechatVoiceRenderer;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.api.ClientModInitializer;
 import net.minecraft.client.Minecraft;
@@ -22,7 +21,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import xyz.breadloaf.replaymodinterface.imsosorry.PacketData;
 import xyz.breadloaf.replaymodinterface.mixin.accessor.ConnectionEventHandlerAccessor;
 import xyz.breadloaf.replaymodinterface.mixin.accessor.GuiPathingAccessor;
 
@@ -85,7 +83,7 @@ public class ReplayInterface implements ClientModInitializer {
         }
     }
 
-    public static boolean injectedPacketSendCheck(PacketData pd) {
+    /*public static boolean injectedPacketSendCheck(PacketData pd) {
         //we use fake plugin message packets to pack voicechat data
         if (!INSTANCE.isRendering) {
             return true;
@@ -98,13 +96,13 @@ public class ReplayInterface implements ClientModInitializer {
                 if (Minecraft.getInstance().cameraEntity != null) {
                     Vec3 cameraLocation = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
                     float yrot = Minecraft.getInstance().gameRenderer.getMainCamera().getYRot();
-                    VoicechatVoiceRenderer.onRecordingPacket(customPayloadPacket, pd.timestamp, cameraLocation, yrot);
+                    //VoicechatVoiceRenderer.onRecordingPacket(customPayloadPacket, pd.timestamp, cameraLocation, yrot);
                 }
                 return false; //stop this packet being sent
             }
         }
         return true;
-    }
+    }*/
 
     public static double getCurrentSpeed() {
         ReplayHandler replayHandler = INSTANCE.replayHandler;

@@ -26,9 +26,9 @@ public class VoicechatVoiceRenderer extends Thread {
     private static InitializationData data;
     private static final Minecraft MC = Minecraft.getInstance();
 
-    public static void onStartRendering(int initialTimestamp) {
+    public static void onStartRendering() {
         if (INSTANCE == null) {
-            INSTANCE = new VoicechatVoiceRenderer(initialTimestamp);
+            INSTANCE = new VoicechatVoiceRenderer();
             INSTANCE.startRecording();
         } else {
             ReplayVoicechat.LOGGER.warn("Started rendering when already rendering");
@@ -49,35 +49,20 @@ public class VoicechatVoiceRenderer extends Thread {
 
     }
 
-    public static void onRecordingPacket(ClientboundCustomPayloadPacket packet, int timestamp, Vec3 cameraLocation, float cameraYRot) {
-        if (INSTANCE != null && INSTANCE.running && INSTANCE.initialTimestamp <= timestamp) {
+    public static void onRecordingPacket(AbstractSoundPacket<?> packet) {
+        if (INSTANCE != null && INSTANCE.running) {
             try {
+                Vec3 cameraLocation = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
+                float yrot = Minecraft.getInstance().gameRenderer.getMainCamera().getYRot();
+
                 ClientVoicechat client = ClientManager.getClient();
                 if (client == null) {
                     return;
                 }
-                AbstractSoundPacket<?> soundPacket;
-                try {
-                    if (packet.getIdentifier().equals(LocationalSoundPacket.ID)) {
-                        soundPacket = new LocationalSoundPacket();
-                        soundPacket.fromBytes(packet.getData());
-                        client.getTalkCache().updateTalking(soundPacket.getId(), false);
-                    } else if (packet.getIdentifier().equals(EntitySoundPacket.ID)) {
-                        soundPacket = new EntitySoundPacket();
-                        soundPacket.fromBytes(packet.getData());
-                        client.getTalkCache().updateTalking(soundPacket.getId(), ((EntitySoundPacket) soundPacket).isWhispering());
-                    } else if (packet.getIdentifier().equals(StaticSoundPacket.ID)) {
-                        soundPacket = new StaticSoundPacket();
-                        soundPacket.fromBytes(packet.getData());
-                        client.getTalkCache().updateTalking(soundPacket.getId(), false);
-                    } else {
-                        return;
-                    }
-                } catch (VersionCompatibilityException e) {
-                    ReplayVoicechat.LOGGER.warn("Failed to read packet: {}", e.getMessage());
-                    return;
+                client.getTalkCache().updateTalking(packet.getId(), packet instanceof EntitySoundPacket p && p.isWhispering());
+                if (ReplayInterface.INSTANCE.videoRenderer != null) {
+                    INSTANCE.packets.put(new PacketWrapper(packet, ReplayInterface.INSTANCE.videoRenderer.getVideoTime(), yrot, cameraLocation, ReplayInterface.getCurrentSpeed()));
                 }
-                INSTANCE.packets.put(new PacketWrapper(soundPacket, ReplayInterface.INSTANCE.videoRenderer.getVideoTime(), cameraYRot, cameraLocation, ReplayInterface.getCurrentSpeed()));
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -91,13 +76,11 @@ public class VoicechatVoiceRenderer extends Thread {
     private boolean running = true;
     private final LinkedBlockingQueue<PacketWrapper> packets;
     private AudioRecorder recorder;
-    private final int initialTimestamp;
     private final HashMap<UUID, Sonic> sonicMap;
 
-    private VoicechatVoiceRenderer(int initialTimestamp) {
+    private VoicechatVoiceRenderer() {
         packets = new LinkedBlockingQueue<>();
         sonicMap = new HashMap<>();
-        this.initialTimestamp = initialTimestamp;
         setName("ReplayVoiceChatVoiceRenderThread");
     }
 
@@ -193,6 +176,9 @@ public class VoicechatVoiceRenderer extends Thread {
     }
 
     public short[] setSpeed(UUID channelId, short[] audio, double speed) {
+        if (speed >= 0.99D && speed <= 1.01D) {
+            return audio;
+        }
         Sonic stream;
         if (!sonicMap.containsKey(channelId)) {
             stream = new Sonic(SoundManager.SAMPLE_RATE, 1);

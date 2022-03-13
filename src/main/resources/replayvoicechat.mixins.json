@@ -10,10 +10,6 @@
     "GroupChatManagerMixin",
     "RenderEventsMixin"
   ],
-  "client": [
-    "ReplayModConnectionEventHandlerMixin",
-    "ReplayModPacketListenerMixin"
-  ],
   "injectors": {
     "defaultRequire": 1
   }

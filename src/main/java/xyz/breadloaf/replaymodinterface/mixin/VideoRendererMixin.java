@@ -25,7 +25,7 @@ public class VideoRendererMixin {
     @Inject(method = "run", at = @At(value = "INVOKE", target = "Ljava/util/concurrent/ExecutorService;submit(Ljava/lang/Runnable;)Ljava/util/concurrent/Future;"))
     public void injected(CallbackInfo ci) {
         if (this.consumerNextFrame == 0) {
-            VoicechatVoiceRenderer.onStartRendering(((FullReplaySenderAccessor)ReplayInterface.INSTANCE.replayHandler.getReplaySender()).getLastTimeStamp());
+            VoicechatVoiceRenderer.onStartRendering();
         }
     }
 }
