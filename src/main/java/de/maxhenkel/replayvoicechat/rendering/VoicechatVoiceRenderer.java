@@ -1,10 +1,7 @@
 package de.maxhenkel.replayvoicechat.rendering;
 
 import de.maxhenkel.replayvoicechat.ReplayVoicechat;
-import de.maxhenkel.replayvoicechat.net.AbstractSoundPacket;
-import de.maxhenkel.replayvoicechat.net.EntitySoundPacket;
-import de.maxhenkel.replayvoicechat.net.LocationalSoundPacket;
-import de.maxhenkel.replayvoicechat.net.StaticSoundPacket;
+import de.maxhenkel.replayvoicechat.net.*;
 import de.maxhenkel.voicechat.api.Position;
 import de.maxhenkel.voicechat.voice.client.AudioRecorder;
 import de.maxhenkel.voicechat.voice.client.InitializationData;
@@ -94,18 +91,22 @@ public class VoicechatVoiceRenderer extends Thread {
 
             if (packetWrapper != null) {
                 AbstractSoundPacket<?> soundPacket;
-                if (packetWrapper.packet.getIdentifier().equals(LocationalSoundPacket.ID)) {
-                    soundPacket = new LocationalSoundPacket();
-                    soundPacket.fromBytes(packetWrapper.packet.getData());
-                    onLocationalSoundPacket(packetWrapper, (LocationalSoundPacket) soundPacket);
-                } else if (packetWrapper.packet.getIdentifier().equals(EntitySoundPacket.ID)) {
-                    soundPacket = new EntitySoundPacket();
-                    soundPacket.fromBytes(packetWrapper.packet.getData());
-                    onEntitySoundPacket(packetWrapper, (EntitySoundPacket) soundPacket);
-                } else if (packetWrapper.packet.getIdentifier().equals(StaticSoundPacket.ID)) {
-                    soundPacket = new StaticSoundPacket();
-                    soundPacket.fromBytes(packetWrapper.packet.getData());
-                    onStaticSoundPacket(packetWrapper, (StaticSoundPacket) soundPacket);
+                try {
+                    if (packetWrapper.packet.getIdentifier().equals(LocationalSoundPacket.ID)) {
+                        soundPacket = new LocationalSoundPacket();
+                        soundPacket.fromBytes(packetWrapper.packet.getData());
+                        onLocationalSoundPacket(packetWrapper, (LocationalSoundPacket) soundPacket);
+                    } else if (packetWrapper.packet.getIdentifier().equals(EntitySoundPacket.ID)) {
+                        soundPacket = new EntitySoundPacket();
+                        soundPacket.fromBytes(packetWrapper.packet.getData());
+                        onEntitySoundPacket(packetWrapper, (EntitySoundPacket) soundPacket);
+                    } else if (packetWrapper.packet.getIdentifier().equals(StaticSoundPacket.ID)) {
+                        soundPacket = new StaticSoundPacket();
+                        soundPacket.fromBytes(packetWrapper.packet.getData());
+                        onStaticSoundPacket(packetWrapper, (StaticSoundPacket) soundPacket);
+                    }
+                } catch (VersionCompatibilityException e) {
+                    ReplayVoicechat.LOGGER.warn("Failed to read packet: {}", e.getMessage());
                 }
             }
         }

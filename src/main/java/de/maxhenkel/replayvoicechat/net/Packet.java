@@ -7,7 +7,7 @@ public interface Packet<T extends Packet<T>> {
 
     ResourceLocation getIdentifier();
 
-    T fromBytes(FriendlyByteBuf buf);
+    T fromBytes(FriendlyByteBuf buf) throws VersionCompatibilityException;
 
     void toBytes(FriendlyByteBuf buf);
 

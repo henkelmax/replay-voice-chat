@@ -32,7 +32,7 @@ public class EntitySoundPacket extends AbstractSoundPacket<EntitySoundPacket> {
     }
 
     @Override
-    public EntitySoundPacket fromBytes(FriendlyByteBuf buf) {
+    public EntitySoundPacket fromBytes(FriendlyByteBuf buf) throws VersionCompatibilityException {
         super.fromBytes(buf);
         whispering = buf.readBoolean();
         return this;

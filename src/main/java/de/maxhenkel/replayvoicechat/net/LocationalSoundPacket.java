@@ -34,7 +34,7 @@ public class LocationalSoundPacket extends AbstractSoundPacket<LocationalSoundPa
     }
 
     @Override
-    public LocationalSoundPacket fromBytes(FriendlyByteBuf buf) {
+    public LocationalSoundPacket fromBytes(FriendlyByteBuf buf) throws VersionCompatibilityException {
         super.fromBytes(buf);
         location = ReplayVoicechatPlugin.CLIENT_API.createPosition(buf.readDouble(), buf.readDouble(), buf.readDouble());
         return this;
