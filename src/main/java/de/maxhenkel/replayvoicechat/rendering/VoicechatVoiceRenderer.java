@@ -8,7 +8,6 @@ import de.maxhenkel.voicechat.voice.client.AudioRecorder;
 import de.maxhenkel.voicechat.voice.client.InitializationData;
 import de.maxhenkel.voicechat.voice.client.PositionalAudioUtils;
 import de.maxhenkel.voicechat.voice.client.SoundManager;
-import it.unimi.dsi.fastutil.Hash;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.protocol.game.ClientboundCustomPayloadPacket;
 import net.minecraft.world.entity.player.Player;
@@ -55,7 +54,7 @@ public class VoicechatVoiceRenderer extends Thread {
     public static void onRecordingPacket(ClientboundCustomPayloadPacket packet, int timestamp, Vec3 cameraLocation, float cameraYRot) {
         if (INSTANCE != null && INSTANCE.running && INSTANCE.initialTimestamp <= timestamp) {
             try {
-                INSTANCE.packets.put(new PacketWrapper(packet, timestamp, cameraYRot, cameraLocation, ReplayInterface.getCurrentSpeed()));
+                INSTANCE.packets.put(new PacketWrapper(packet, ReplayInterface.INSTANCE.videoRenderer.getVideoTime(), cameraYRot, cameraLocation, ReplayInterface.getCurrentSpeed()));
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -83,7 +82,7 @@ public class VoicechatVoiceRenderer extends Thread {
         String videoFileName = ReplayInterface.INSTANCE.videoRenderer.getRenderSettings().getOutputFile().getName();
         String filename = videoFileName.substring(0, videoFileName.lastIndexOf('.'));
         Path path = ReplayInterface.INSTANCE.videoRenderer.getRenderSettings().getOutputFile().toPath().getParent().resolve(filename + "_audio");
-        recorder = new AudioRecorder(path, initialTimestamp);
+        recorder = new AudioRecorder(path, 0L);
         start();
     }
 
