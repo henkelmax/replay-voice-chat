@@ -32,11 +32,11 @@ public class VoicechatVoiceRenderer extends Thread {
             INSTANCE = new VoicechatVoiceRenderer(initialTimestamp);
             INSTANCE.startRecording();
         } else {
-            throw new IllegalStateException("Start called while started");
+            ReplayVoicechat.LOGGER.warn("Started rendering when already rendering");
         }
     }
 
-    public static void onStopRecording() {
+    public static void onStopRendering() {
         if (INSTANCE != null) {
             try {
                 INSTANCE.stopAndWait();

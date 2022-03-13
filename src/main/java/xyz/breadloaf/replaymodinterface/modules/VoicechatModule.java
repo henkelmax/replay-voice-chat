@@ -34,7 +34,7 @@ public class VoicechatModule extends EventRegistrations implements Module {
         on(ReplayRenderCallback.Post.EVENT, videoRenderer -> {
             ReplayInterface.logger.info("ReplayRenderCallback/Post");
             ReplayInterface.INSTANCE.isRendering = false;
-            VoicechatVoiceRenderer.onStopRecording();
+            VoicechatVoiceRenderer.onStopRendering();
             ReplayInterface.INSTANCE.videoRenderer = null;
         });
         register();
