@@ -126,7 +126,12 @@ public class ReplayInterface implements ClientModInitializer {
             return 1D;
         }
 
-        long currentRealtime = guiPathingAccessor.getPlayer().getTimePassed();
+        long currentRealtime;
+        if (INSTANCE.isRendering) {
+            currentRealtime = ReplayInterface.INSTANCE.videoRenderer.getVideoTime();
+        } else {
+            currentRealtime = guiPathingAccessor.getPlayer().getTimePassed();
+        }
 
         List<Path> paths = timeline.getPaths();
 
