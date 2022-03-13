@@ -8,6 +8,7 @@ import de.maxhenkel.voicechat.voice.client.AudioRecorder;
 import de.maxhenkel.voicechat.voice.client.InitializationData;
 import de.maxhenkel.voicechat.voice.client.PositionalAudioUtils;
 import de.maxhenkel.voicechat.voice.client.SoundManager;
+import it.unimi.dsi.fastutil.Hash;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.protocol.game.ClientboundCustomPayloadPacket;
 import net.minecraft.world.entity.player.Player;
@@ -18,6 +19,8 @@ import javax.annotation.Nullable;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.UUID;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
@@ -67,9 +70,11 @@ public class VoicechatVoiceRenderer extends Thread {
     private final LinkedBlockingQueue<PacketWrapper> packets;
     private AudioRecorder recorder;
     private final int initialTimestamp;
+    private HashMap<UUID,Sonic> sonicMap;
 
     private VoicechatVoiceRenderer(int initialTimestamp) {
         packets = new LinkedBlockingQueue<>();
+        sonicMap = new HashMap<>();
         this.initialTimestamp = initialTimestamp;
         setName("ReplayVoiceChatVoiceRenderThread");
     }
@@ -124,7 +129,7 @@ public class VoicechatVoiceRenderer extends Thread {
                             packetWrapper.cameraPos,
                             packetWrapper.yrot,
                             new Vec3(location.getX(), location.getY(), location.getZ()),
-                            setSpeed(locationalSoundPacket.getRawAudio(), packetWrapper.speed),
+                            setSpeed(locationalSoundPacket.getId(),locationalSoundPacket.getRawAudio(), packetWrapper.speed),
                             1F
                     ));
         } catch (IOException e) {
@@ -147,7 +152,7 @@ public class VoicechatVoiceRenderer extends Thread {
                             packetWrapper.cameraPos,
                             packetWrapper.yrot,
                             pos,
-                            setSpeed(entitySoundPacket.getRawAudio(), packetWrapper.speed),
+                            setSpeed(entitySoundPacket.getId(),entitySoundPacket.getRawAudio(), packetWrapper.speed),
                             multiplier
                     ));
         } catch (IOException e) {
@@ -157,15 +162,22 @@ public class VoicechatVoiceRenderer extends Thread {
 
     private void onStaticSoundPacket(PacketWrapper packetWrapper, StaticSoundPacket staticSoundPacket) {
         try {
-            recorder.appendChunk(staticSoundPacket.getId(), packetWrapper.timestamp, PositionalAudioUtils.convertToStereo(setSpeed(staticSoundPacket.getRawAudio(), packetWrapper.speed)));
+            recorder.appendChunk(staticSoundPacket.getId(), packetWrapper.timestamp, PositionalAudioUtils.convertToStereo(setSpeed(staticSoundPacket.getId(),staticSoundPacket.getRawAudio(), packetWrapper.speed)));
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public short[] setSpeed(short[] audio, double speed) {
-        Sonic stream = new Sonic(SoundManager.SAMPLE_RATE, 1);
+    public short[] setSpeed(UUID channelId, short[] audio, double speed) {
+        Sonic stream;
+        if (!sonicMap.containsKey(channelId)) {
+            stream = new Sonic(SoundManager.SAMPLE_RATE, 1);
+            sonicMap.put(channelId,stream);
+        } else {
+            stream = sonicMap.get(channelId);
+        }
         stream.setSpeed((float) speed);
+        stream.setPitch((float) speed);
         stream.writeShortToStream(audio, audio.length);
         stream.flushStream();
         int numSamples = stream.samplesAvailable();
