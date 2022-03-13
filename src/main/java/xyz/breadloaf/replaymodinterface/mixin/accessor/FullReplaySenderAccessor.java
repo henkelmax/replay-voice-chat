@@ -4,7 +4,7 @@ import com.replaymod.replay.FullReplaySender;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
-@Mixin(FullReplaySender.class)
+@Mixin(value = FullReplaySender.class, remap = false)
 public interface FullReplaySenderAccessor {
     @Accessor("lastTimeStamp")
     int getLastTimeStamp();

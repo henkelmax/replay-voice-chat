@@ -1,13 +1,11 @@
 package de.maxhenkel.replayvoicechat.rendering;
 
+import com.replaymod.render.rendering.VideoRenderer;
 import de.maxhenkel.replayvoicechat.ReplayVoicechat;
 import de.maxhenkel.replayvoicechat.net.*;
 import de.maxhenkel.sonic.Sonic;
 import de.maxhenkel.voicechat.api.Position;
-import de.maxhenkel.voicechat.voice.client.AudioRecorder;
-import de.maxhenkel.voicechat.voice.client.InitializationData;
-import de.maxhenkel.voicechat.voice.client.PositionalAudioUtils;
-import de.maxhenkel.voicechat.voice.client.SoundManager;
+import de.maxhenkel.voicechat.voice.client.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.protocol.game.ClientboundCustomPayloadPacket;
 import net.minecraft.world.entity.player.Player;
@@ -54,7 +52,32 @@ public class VoicechatVoiceRenderer extends Thread {
     public static void onRecordingPacket(ClientboundCustomPayloadPacket packet, int timestamp, Vec3 cameraLocation, float cameraYRot) {
         if (INSTANCE != null && INSTANCE.running && INSTANCE.initialTimestamp <= timestamp) {
             try {
-                INSTANCE.packets.put(new PacketWrapper(packet, ReplayInterface.INSTANCE.videoRenderer.getVideoTime(), cameraYRot, cameraLocation, ReplayInterface.getCurrentSpeed()));
+                ClientVoicechat client = ClientManager.getClient();
+                if (client == null) {
+                    return;
+                }
+                AbstractSoundPacket<?> soundPacket;
+                try {
+                    if (packet.getIdentifier().equals(LocationalSoundPacket.ID)) {
+                        soundPacket = new LocationalSoundPacket();
+                        soundPacket.fromBytes(packet.getData());
+                        client.getTalkCache().updateTalking(soundPacket.getId(), false);
+                    } else if (packet.getIdentifier().equals(EntitySoundPacket.ID)) {
+                        soundPacket = new EntitySoundPacket();
+                        soundPacket.fromBytes(packet.getData());
+                        client.getTalkCache().updateTalking(soundPacket.getId(), ((EntitySoundPacket) soundPacket).isWhispering());
+                    } else if (packet.getIdentifier().equals(StaticSoundPacket.ID)) {
+                        soundPacket = new StaticSoundPacket();
+                        soundPacket.fromBytes(packet.getData());
+                        client.getTalkCache().updateTalking(soundPacket.getId(), false);
+                    } else {
+                        return;
+                    }
+                } catch (VersionCompatibilityException e) {
+                    ReplayVoicechat.LOGGER.warn("Failed to read packet: {}", e.getMessage());
+                    return;
+                }
+                INSTANCE.packets.put(new PacketWrapper(soundPacket, ReplayInterface.INSTANCE.videoRenderer.getVideoTime(), cameraYRot, cameraLocation, ReplayInterface.getCurrentSpeed()));
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -83,6 +106,16 @@ public class VoicechatVoiceRenderer extends Thread {
         String filename = videoFileName.substring(0, videoFileName.lastIndexOf('.'));
         Path path = ReplayInterface.INSTANCE.videoRenderer.getRenderSettings().getOutputFile().toPath().getParent().resolve(filename + "_audio");
         recorder = new AudioRecorder(path, 0L);
+        ClientVoicechat client = ClientManager.getClient();
+        if (client != null) {
+            client.getTalkCache().setTimestampSupplier(() -> {
+                VideoRenderer videoRenderer = ReplayInterface.INSTANCE.videoRenderer;
+                if (videoRenderer != null) {
+                    return (long) videoRenderer.getVideoTime();
+                }
+                return System.currentTimeMillis();
+            });
+        }
         start();
     }
 
@@ -96,25 +129,16 @@ public class VoicechatVoiceRenderer extends Thread {
                 e.printStackTrace();
             }
 
-            if (packetWrapper != null) {
-                AbstractSoundPacket<?> soundPacket;
-                try {
-                    if (packetWrapper.packet.getIdentifier().equals(LocationalSoundPacket.ID)) {
-                        soundPacket = new LocationalSoundPacket();
-                        soundPacket.fromBytes(packetWrapper.packet.getData());
-                        onLocationalSoundPacket(packetWrapper, (LocationalSoundPacket) soundPacket);
-                    } else if (packetWrapper.packet.getIdentifier().equals(EntitySoundPacket.ID)) {
-                        soundPacket = new EntitySoundPacket();
-                        soundPacket.fromBytes(packetWrapper.packet.getData());
-                        onEntitySoundPacket(packetWrapper, (EntitySoundPacket) soundPacket);
-                    } else if (packetWrapper.packet.getIdentifier().equals(StaticSoundPacket.ID)) {
-                        soundPacket = new StaticSoundPacket();
-                        soundPacket.fromBytes(packetWrapper.packet.getData());
-                        onStaticSoundPacket(packetWrapper, (StaticSoundPacket) soundPacket);
-                    }
-                } catch (VersionCompatibilityException e) {
-                    ReplayVoicechat.LOGGER.warn("Failed to read packet: {}", e.getMessage());
-                }
+            if (packetWrapper == null) {
+                continue;
+            }
+
+            if (packetWrapper.packet instanceof LocationalSoundPacket packet) {
+                onLocationalSoundPacket(packetWrapper, packet);
+            } else if (packetWrapper.packet instanceof EntitySoundPacket packet) {
+                onEntitySoundPacket(packetWrapper, packet);
+            } else if (packetWrapper.packet instanceof StaticSoundPacket packet) {
+                onStaticSoundPacket(packetWrapper, packet);
             }
         }
         onStop();
@@ -204,13 +228,13 @@ public class VoicechatVoiceRenderer extends Thread {
     }
 
     public static class PacketWrapper {
-        public ClientboundCustomPayloadPacket packet;
+        public AbstractSoundPacket<?> packet;
         public int timestamp;
         public float yrot;
         public Vec3 cameraPos;
         public double speed;
 
-        public PacketWrapper(ClientboundCustomPayloadPacket packet, int timestamp, float yrot, Vec3 cameraPos, double speed) {
+        public PacketWrapper(AbstractSoundPacket<?> packet, int timestamp, float yrot, Vec3 cameraPos, double speed) {
             this.packet = packet;
             this.timestamp = timestamp;
             this.cameraPos = cameraPos;
