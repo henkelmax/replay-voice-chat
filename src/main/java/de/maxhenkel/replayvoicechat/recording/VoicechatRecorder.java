@@ -1,5 +1,6 @@
 package de.maxhenkel.replayvoicechat.recording;
 
+import de.maxhenkel.replayvoicechat.ReplayVoicechatPlugin;
 import de.maxhenkel.replayvoicechat.net.EntitySoundPacket;
 import de.maxhenkel.replayvoicechat.net.LocationalSoundPacket;
 import de.maxhenkel.replayvoicechat.net.Packet;
@@ -29,17 +30,18 @@ public class VoicechatRecorder {
         send(new StaticSoundPacket(event.getId(), event.getRawAudio()));
     }
 
-    // TODO check if player is in group
     public static void onSound(ClientSoundEvent event) {
         if (MC.player == null) {
             return;
         }
         UUID id = MC.getUser().getGameProfile().getId();
         short[] rawAudio = event.getRawAudio();
-        if (rawAudio.length <= 0) {
-            send(new EntitySoundPacket(id, null, event.isWhispering()));
+
+        if (ReplayVoicechatPlugin.CLIENT_API.getGroup() != null) {
+            send(new StaticSoundPacket(id, rawAudio));
+        } else {
+            send(new EntitySoundPacket(id, rawAudio, event.isWhispering()));
         }
-        send(new EntitySoundPacket(id, rawAudio, event.isWhispering()));
     }
 
     public static void send(Packet<?> packet) {
