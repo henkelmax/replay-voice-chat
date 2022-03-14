@@ -35,7 +35,16 @@ dependencies {
     mappings loom.officialMojangMappings()
     modImplementation "net.fabricmc:fabric-loader:${loader_version}"
 
-    modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
+    Set<String> apiModules = [
+            "fabric-api-base",
+            "fabric-networking-api-v1"
+    ]
+
+    apiModules.forEach {
+        include(modImplementation(fabricApi.module(it, fabric_version)))
+    }
+
+    modRuntimeOnly "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
 
     implementation 'com.google.code.findbugs:jsr305:3.0.2'
 
@@ -57,8 +66,8 @@ processResources {
                 "java_version": java_version,
                 "minecraft_dependency": minecraft_dependency,
                 "loader_version": loader_version,
-                "fabric_version": fabric_version,
                 "voicechat_dependency": voicechat_dependency,
+                "voicechat_breaks": voicechat_breaks,
                 "replaymod_dependency": replaymod_dependency
     }
 }

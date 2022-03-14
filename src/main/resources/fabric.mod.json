@@ -30,10 +30,12 @@
   ],
   "depends": {
     "fabricloader": ">=${loader_version}",
-    "fabric": ">=${fabric_version}",
     "minecraft": "${minecraft_dependency}",
     "java": ">=${java_version}",
     "voicechat": ">=${voicechat_dependency}",
-    "replaymod": ">=${replaymod_dependency}"
+    "replaymod": "=${replaymod_dependency}"
+  },
+  "breaks": {
+    "voicechat": ">=${voicechat_breaks}"
   }
 }
