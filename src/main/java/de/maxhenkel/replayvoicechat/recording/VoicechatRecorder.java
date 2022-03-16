@@ -5,8 +5,11 @@ import de.maxhenkel.replayvoicechat.net.EntitySoundPacket;
 import de.maxhenkel.replayvoicechat.net.LocationalSoundPacket;
 import de.maxhenkel.replayvoicechat.net.Packet;
 import de.maxhenkel.replayvoicechat.net.StaticSoundPacket;
+import de.maxhenkel.voicechat.VoicechatClient;
 import de.maxhenkel.voicechat.api.events.ClientReceiveSoundEvent;
 import de.maxhenkel.voicechat.api.events.ClientSoundEvent;
+import de.maxhenkel.voicechat.voice.client.ClientManager;
+import de.maxhenkel.voicechat.voice.client.ClientPlayerStateManager;
 import io.netty.buffer.Unpooled;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
@@ -34,7 +37,7 @@ public class VoicechatRecorder {
         if (MC.player == null) {
             return;
         }
-        UUID id = MC.getUser().getGameProfile().getId();
+        UUID id = ClientManager.getPlayerStateManager().getOwnID();
         short[] rawAudio = event.getRawAudio();
 
         if (ReplayVoicechatPlugin.CLIENT_API.getGroup() != null) {
