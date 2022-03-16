@@ -2,12 +2,14 @@ package de.maxhenkel.replayvoicechat.rendering;
 
 import com.replaymod.render.rendering.VideoRenderer;
 import de.maxhenkel.replayvoicechat.ReplayVoicechat;
-import de.maxhenkel.replayvoicechat.net.*;
+import de.maxhenkel.replayvoicechat.net.AbstractSoundPacket;
+import de.maxhenkel.replayvoicechat.net.EntitySoundPacket;
+import de.maxhenkel.replayvoicechat.net.LocationalSoundPacket;
+import de.maxhenkel.replayvoicechat.net.StaticSoundPacket;
 import de.maxhenkel.sonic.Sonic;
 import de.maxhenkel.voicechat.api.Position;
 import de.maxhenkel.voicechat.voice.client.*;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.protocol.game.ClientboundCustomPayloadPacket;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import xyz.breadloaf.replaymodinterface.ReplayInterface;
@@ -60,6 +62,9 @@ public class VoicechatVoiceRenderer extends Thread {
                     return;
                 }
                 client.getTalkCache().updateTalking(packet.getId(), packet instanceof EntitySoundPacket p && p.isWhispering());
+                if (ReplayInterface.INSTANCE.isPlayerHidden(packet.getId())) {
+                    return;
+                }
                 if (ReplayInterface.INSTANCE.videoRenderer != null) {
                     INSTANCE.packets.put(new PacketWrapper(packet, ReplayInterface.INSTANCE.videoRenderer.getVideoTime(), yrot, cameraLocation, ReplayInterface.getCurrentSpeed()));
                 }

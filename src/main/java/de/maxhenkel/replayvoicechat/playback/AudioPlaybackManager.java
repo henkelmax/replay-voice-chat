@@ -42,6 +42,9 @@ public class AudioPlaybackManager {
     }
 
     public void onEntitySound(EntitySoundPacket packet) {
+        if (ReplayInterface.INSTANCE.isPlayerHidden(packet.getId())) {
+            return;
+        }
         ClientEntityAudioChannel channel = getAudioChannel(ClientEntityAudioChannel.class, packet.getId());
         if (channel == null) {
             channel = ReplayVoicechatPlugin.CLIENT_API.createEntityAudioChannel(packet.getId());
@@ -51,6 +54,9 @@ public class AudioPlaybackManager {
     }
 
     public void onLocationalSound(LocationalSoundPacket packet) {
+        if (ReplayInterface.INSTANCE.isPlayerHidden(packet.getId())) {
+            return;
+        }
         ClientLocationalAudioChannel channel = getAudioChannel(ClientLocationalAudioChannel.class, packet.getId());
         if (channel == null) {
             channel = ReplayVoicechatPlugin.CLIENT_API.createLocationalAudioChannel(packet.getId(), packet.getLocation());
@@ -62,6 +68,9 @@ public class AudioPlaybackManager {
     }
 
     public void onStaticSound(StaticSoundPacket packet) {
+        if (ReplayInterface.INSTANCE.isPlayerHidden(packet.getId())) {
+            return;
+        }
         ClientStaticAudioChannel channel = getAudioChannel(ClientStaticAudioChannel.class, packet.getId());
         if (channel == null) {
             channel = ReplayVoicechatPlugin.CLIENT_API.createStaticAudioChannel(packet.getId());

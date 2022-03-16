@@ -1,5 +1,7 @@
 package xyz.breadloaf.replaymodinterface;
 
+import com.replaymod.extras.ReplayModExtras;
+import com.replaymod.extras.playeroverview.PlayerOverview;
 import com.replaymod.pathing.properties.TimestampProperty;
 import com.replaymod.recording.ReplayModRecording;
 import com.replaymod.render.rendering.VideoRenderer;
@@ -8,17 +10,13 @@ import com.replaymod.replaystudio.pathing.impl.TimelineImpl;
 import com.replaymod.replaystudio.pathing.path.Keyframe;
 import com.replaymod.replaystudio.pathing.path.Path;
 import com.replaymod.replaystudio.pathing.path.Timeline;
-import com.replaymod.replaystudio.protocol.PacketType;
 import com.replaymod.simplepathing.ReplayModSimplePathing;
-import de.maxhenkel.replayvoicechat.ReplayVoicechat;
-import io.netty.buffer.Unpooled;
+import de.maxhenkel.voicechat.api.Player;
 import net.fabricmc.api.ClientModInitializer;
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundCustomPayloadPacket;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.phys.Vec3;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import xyz.breadloaf.replaymodinterface.mixin.accessor.ConnectionEventHandlerAccessor;
@@ -28,6 +26,7 @@ import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 public class ReplayInterface implements ClientModInitializer {
     public static Logger logger = LogManager.getLogger("ReplayInterface");
@@ -48,7 +47,7 @@ public class ReplayInterface implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-
+        
     }
 
     //Check if replay mod is active (IE loaded at world load)
@@ -66,6 +65,11 @@ public class ReplayInterface implements ClientModInitializer {
         if (ReplayModRecording.instance.getConnectionEventHandler() != null) {
             ReplayModRecording.instance.getConnectionEventHandler().getPacketListener().save(packet);
         }
+    }
+
+    public boolean isPlayerHidden(UUID uuid) {
+        Optional<PlayerOverview> playerOverview = ReplayModExtras.instance.get(PlayerOverview.class);
+        return playerOverview.map(overview -> overview.isHidden(uuid)).orElse(false);
     }
 
     public static double getCurrentSpeed() {
