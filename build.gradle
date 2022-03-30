@@ -60,7 +60,7 @@ dependencies {
 
 processResources {
     inputs.property "version", version
-
+    from("LICENSE")
     filesMatching("fabric.mod.json") {
         expand "version": mod_version,
                 "java_version": java_version,
