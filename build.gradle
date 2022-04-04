@@ -1,6 +1,8 @@
 plugins {
     id 'fabric-loom' version '0.11-SNAPSHOT'
     id 'com.github.johnrengelman.shadow' version '7.1.0'
+    id 'com.matthewprenger.cursegradle' version '1.4.0'
+    id 'com.modrinth.minotaur' version '2.+'
 }
 
 sourceCompatibility = JavaLanguageVersion.of(java_version as int)
@@ -92,10 +94,57 @@ shadowJar {
     relocate 'de.maxhenkel.sonic', "de.maxhenkel.${archives_base_name}.sonic"
 }
 
-remapJar {
-    input.set shadowJar.archiveFile.get()
-}
-
 prepareRemapJar {
     dependsOn shadowJar
 }
+
+remapJar {
+    input = shadowJar.archiveFile.get()
+}
+
+curseforge {
+    apiKey = file("${rootDir}/curseforge_api_key.txt").exists() ? file("${rootDir}/curseforge_api_key.txt").text : ''
+    project {
+        id = curse_id
+        changelogType = 'markdown'
+        changelog = file("changelog.md")
+        releaseType = release_type
+        addGameVersion curseforge_minecraft_version
+        addGameVersion 'Fabric'
+        addGameVersion "Java ${java_version}"
+        mainArtifact(file("${buildDir}/libs/${archivesBaseName}-${version}.jar")) {
+            displayName = "[FABRIC][${minecraft_version}] ${mod_name} ${mod_version}"
+            relations {
+                requiredDependency 'simple-voice-chat'
+            }
+        }
+        afterEvaluate {
+            uploadTask.dependsOn(remapJar)
+        }
+    }
+    options {
+        forgeGradleIntegration = false
+    }
+}
+
+import com.modrinth.minotaur.dependencies.ModDependency
+
+tasks.modrinth.configure({
+    group = 'upload'
+})
+
+modrinth {
+    token = file("${rootDir}/modrinth_token.txt").exists() ? file("${rootDir}/modrinth_token.txt").text : ''
+    projectId = modrinth_id
+    versionNumber = "fabric-${mod_version}"
+    versionName = "[FABRIC][${minecraft_version}] ${mod_name} ${mod_version}"
+    uploadFile = remapJar
+    versionType = release_type.toUpperCase()
+    changelog = file("changelog.md").text
+    gameVersions = [minecraft_version]
+    loaders = ['fabric']
+    dependencies = [
+            new ModDependency("9eGKb6K1", "required") // Simple Voice Chat
+    ]
+}
+tasks.modrinth.dependsOn(build)
