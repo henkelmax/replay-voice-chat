@@ -1,6 +1,19 @@
-# Simple Voice Chat ReplayMod Compatibility
+# Replay Voice Chat
 
-A mod adding compatibility between Simple Voice Chat and ReplayMod.
+A compatibility mod to record [Simple Voice Chat](https://www.curseforge.com/minecraft/mc-mods/simple-voice-chat) with [ReplayMod](https://www.replaymod.com/).
+
+![](https://i.imgur.com/jQsK7O3.png)
+
+## Features
+
+- Works out of the box
+- Records voice chat player icons
+- Records locational audio
+- Records group chat audio
+- Records your own audio
+- Each audio track is exported separately when rendering
+- Simple Voice Chat Plugin API support
+- Support for speeding up or slowing down replays
 
 ## Credits
 
