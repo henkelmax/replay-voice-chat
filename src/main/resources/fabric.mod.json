@@ -12,7 +12,7 @@
     "homepage": "https://modrepo.de/",
     "sources": "https://github.com/henkelmax/svc-replay-mod"
   },
-  "license": "ARR",
+  "license": "MIT",
   "icon": "assets/replayvoicechat/icon.png",
   "environment": "client",
   "entrypoints": {
