@@ -1,0 +1,1 @@
+- Updated required ReplayMod version to 2.6.5
