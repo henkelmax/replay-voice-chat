@@ -27,10 +27,12 @@ You can use [https://gist.github.com/](https://gist.github.com/).
 **Versions**
 - Minecraft version
 - Fabric version
+- Simple Voice Chat version
+- ReplayMod Version
 - Mod version
 
 **Other mods**
-A list of the other mods/plugins that were installed when this problem occurred.
+A list of the other mods that were installed when this problem occurred.
 It would be ideal if you could test if this problem persists when no other mod is installed.
 If not, please narrow down the mod(s) that are causing the problem.
 
