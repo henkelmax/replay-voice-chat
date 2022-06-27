@@ -1,1 +1,1 @@
-- Updated required ReplayMod version to 2.6.5
+- Updated to 1.19

@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '0.11-SNAPSHOT'
+    id 'fabric-loom' version '0.12-SNAPSHOT'
     id 'com.github.johnrengelman.shadow' version '7.1.0'
     id 'com.matthewprenger.cursegradle' version '1.4.0'
     id 'com.modrinth.minotaur' version '2.+'
@@ -55,7 +55,7 @@ dependencies {
     implementation "de.maxhenkel.sonic:sonic:1.0.0-SNAPSHOT"
     shadow "de.maxhenkel.sonic:sonic:1.0.0-SNAPSHOT"
 
-//    modRuntimeOnly "maven.modrinth:simple-voice-chat:fabric-${voicechat_dependency}"
+    modImplementation "maven.modrinth:simple-voice-chat:fabric-${voicechat_dependency}"
 
     modImplementation fileTree(dir: 'libs', include: '*.jar')
 }
@@ -127,8 +127,6 @@ curseforge {
     }
 }
 
-import com.modrinth.minotaur.dependencies.ModDependency
-
 tasks.modrinth.configure({
     group = 'upload'
 })
@@ -143,8 +141,8 @@ modrinth {
     changelog = file("changelog.md").text
     gameVersions = [minecraft_version]
     loaders = ['fabric']
-    dependencies = [
-            new ModDependency("9eGKb6K1", "required") // Simple Voice Chat
-    ]
+    dependencies {
+        required.project "9eGKb6K1" // Simple Voice Chat
+    }
 }
 tasks.modrinth.dependsOn(build)
