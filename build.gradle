@@ -55,7 +55,7 @@ dependencies {
     implementation "de.maxhenkel.sonic:sonic:1.0.0-SNAPSHOT"
     shadow "de.maxhenkel.sonic:sonic:1.0.0-SNAPSHOT"
 
-    modImplementation "maven.modrinth:simple-voice-chat:fabric-${voicechat_dependency}"
+//    modImplementation "maven.modrinth:simple-voice-chat:fabric-${voicechat_dependency}"
 
     modImplementation fileTree(dir: 'libs', include: '*.jar')
 }

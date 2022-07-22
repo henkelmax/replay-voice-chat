@@ -7,11 +7,11 @@ import java.util.UUID;
 
 public abstract class AbstractSoundPacket<T extends Packet<T>> implements Packet<T> {
 
-    public static final short CURRENT_VERSION = 0;
+    public static final short CURRENT_VERSION = 1;
 
-    private short version;
-    private UUID id;
-    private short[] rawAudio;
+    protected short version;
+    protected UUID id;
+    protected short[] rawAudio;
 
     public AbstractSoundPacket(UUID id, short[] rawAudio) {
         version = CURRENT_VERSION;
@@ -34,7 +34,7 @@ public abstract class AbstractSoundPacket<T extends Packet<T>> implements Packet
     @Override
     public T fromBytes(FriendlyByteBuf buf) throws VersionCompatibilityException {
         version = buf.readShort();
-        if (version != CURRENT_VERSION) {
+        if (version != CURRENT_VERSION && version != 0) {
             throw new VersionCompatibilityException("Incompatible version");
         }
         id = buf.readUUID();

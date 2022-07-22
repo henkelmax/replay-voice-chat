@@ -1,1 +1,1 @@
-- Fixed crash while rendering
+- Added compatibility with Simple Voice Chat 2.3.x

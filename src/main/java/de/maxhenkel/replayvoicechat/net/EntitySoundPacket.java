@@ -1,6 +1,7 @@
 package de.maxhenkel.replayvoicechat.net;
 
 import de.maxhenkel.replayvoicechat.ReplayVoicechat;
+import de.maxhenkel.replayvoicechat.ReplayVoicechatPlugin;
 import de.maxhenkel.replayvoicechat.playback.AudioPlaybackManager;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -12,8 +13,9 @@ public class EntitySoundPacket extends AbstractSoundPacket<EntitySoundPacket> {
     public static ResourceLocation ID = new ResourceLocation(ReplayVoicechat.MOD_ID, "entity_sound");
 
     private boolean whispering;
+    private float distance;
 
-    public EntitySoundPacket(UUID id, short[] rawAudio, boolean whispering) {
+    public EntitySoundPacket(UUID id, short[] rawAudio, boolean whispering, float distance) {
         super(id, rawAudio);
         this.whispering = whispering;
     }
@@ -31,10 +33,19 @@ public class EntitySoundPacket extends AbstractSoundPacket<EntitySoundPacket> {
         return whispering;
     }
 
+    public float getDistance() {
+        return distance;
+    }
+
     @Override
     public EntitySoundPacket fromBytes(FriendlyByteBuf buf) throws VersionCompatibilityException {
         super.fromBytes(buf);
         whispering = buf.readBoolean();
+        if (version >= 1) {
+            distance = buf.readFloat();
+        } else {
+            distance = (float) ReplayVoicechatPlugin.CLIENT_API.getVoiceChatDistance();
+        }
         return this;
     }
 
@@ -42,6 +53,7 @@ public class EntitySoundPacket extends AbstractSoundPacket<EntitySoundPacket> {
     public void toBytes(FriendlyByteBuf buf) {
         super.toBytes(buf);
         buf.writeBoolean(whispering);
+        buf.writeFloat(distance);
     }
 
     @Override

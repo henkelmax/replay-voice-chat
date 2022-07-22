@@ -137,7 +137,7 @@ public class VoicechatVoiceRenderer extends Thread {
             Position location = locationalSoundPacket.getLocation();
             recorder.appendChunk(locationalSoundPacket.getId(), packetWrapper.timestamp,
                     PositionalAudioUtils.convertToStereoForRecording(
-                            data,
+                            locationalSoundPacket.getDistance(),
                             packetWrapper.cameraPos,
                             packetWrapper.yrot,
                             new Vec3(location.getX(), location.getY(), location.getZ()),
@@ -160,7 +160,7 @@ public class VoicechatVoiceRenderer extends Thread {
 
             recorder.appendChunk(entitySoundPacket.getId(), packetWrapper.timestamp,
                     PositionalAudioUtils.convertToStereoForRecording(
-                            data,
+                            entitySoundPacket.getDistance(),
                             packetWrapper.cameraPos,
                             packetWrapper.yrot,
                             pos,
