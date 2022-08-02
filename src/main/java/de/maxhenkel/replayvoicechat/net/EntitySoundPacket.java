@@ -18,6 +18,7 @@ public class EntitySoundPacket extends AbstractSoundPacket<EntitySoundPacket> {
     public EntitySoundPacket(UUID id, short[] rawAudio, boolean whispering, float distance) {
         super(id, rawAudio);
         this.whispering = whispering;
+        this.distance = distance;
     }
 
     public EntitySoundPacket() {
