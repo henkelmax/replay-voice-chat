@@ -141,8 +141,7 @@ public class VoicechatVoiceRenderer extends Thread {
                             packetWrapper.cameraPos,
                             packetWrapper.yrot,
                             new Vec3(location.getX(), location.getY(), location.getZ()),
-                            setSpeed(locationalSoundPacket.getId(), locationalSoundPacket.getRawAudio(), packetWrapper.speed),
-                            1F
+                            setSpeed(locationalSoundPacket.getId(), locationalSoundPacket.getRawAudio(), packetWrapper.speed)
                     ));
         } catch (IOException e) {
             e.printStackTrace();
@@ -153,19 +152,13 @@ public class VoicechatVoiceRenderer extends Thread {
         try {
             @Nullable Player player = MC.level.getPlayerByUUID(entitySoundPacket.getId());
             Vec3 pos = player.getEyePosition();
-
-            float crouchMultiplayer = player.isCrouching() ? (float) data.getCrouchDistanceMultiplier() : 1F;
-            float whisperMultiplayer = entitySoundPacket.isWhispering() ? (float) data.getWhisperDistanceMultiplier() : 1F;
-            float multiplier = crouchMultiplayer * whisperMultiplayer;
-
             recorder.appendChunk(entitySoundPacket.getId(), packetWrapper.timestamp,
                     PositionalAudioUtils.convertToStereoForRecording(
                             entitySoundPacket.getDistance(),
                             packetWrapper.cameraPos,
                             packetWrapper.yrot,
                             pos,
-                            setSpeed(entitySoundPacket.getId(), entitySoundPacket.getRawAudio(), packetWrapper.speed),
-                            multiplier
+                            setSpeed(entitySoundPacket.getId(), entitySoundPacket.getRawAudio(), packetWrapper.speed)
                     ));
         } catch (IOException e) {
             e.printStackTrace();
