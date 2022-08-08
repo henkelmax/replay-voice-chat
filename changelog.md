@@ -1,1 +1,1 @@
-- Added compatibility with Simple Voice Chat 2.3.x
+- Added compatibility with the latest Simple Voice Chat version

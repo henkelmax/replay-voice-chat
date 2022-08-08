@@ -10,7 +10,7 @@ import de.maxhenkel.voicechat.plugins.impl.VoicechatClientApiImpl;
 
 public class ReplayVoicechatPlugin implements VoicechatPlugin {
 
-    public static VoicechatClientApi CLIENT_API = new VoicechatClientApiImpl();
+    public static VoicechatClientApi CLIENT_API = VoicechatClientApiImpl.instance();
 
     @Override
     public String getPluginId() {
