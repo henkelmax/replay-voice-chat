@@ -36,7 +36,7 @@ public class ClientManagerMixin {
                 VoicechatVoiceRenderer.onInitializationData(initializationData);
                 ((ClientVoicechatAccessor) this.client).setConnection(new FakeVoicechatConnection(client, initializationData));
                 ((ClientVoicechatAccessor) this.client).getConnection().start();
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
