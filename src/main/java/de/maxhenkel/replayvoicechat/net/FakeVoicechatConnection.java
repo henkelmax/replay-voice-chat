@@ -1,18 +1,17 @@
 package de.maxhenkel.replayvoicechat.net;
 
+import de.maxhenkel.voicechat.api.ClientVoicechatSocket;
 import de.maxhenkel.voicechat.intercompatibility.ClientCompatibilityManager;
 import de.maxhenkel.voicechat.voice.client.ClientVoicechat;
 import de.maxhenkel.voicechat.voice.client.ClientVoicechatConnection;
 import de.maxhenkel.voicechat.voice.client.InitializationData;
 import de.maxhenkel.voicechat.voice.common.NetworkMessage;
 
-import java.io.IOException;
-import java.net.DatagramSocket;
 import java.net.InetAddress;
 
 public class FakeVoicechatConnection extends ClientVoicechatConnection {
 
-    public FakeVoicechatConnection(ClientVoicechat client, InitializationData data) throws IOException {
+    public FakeVoicechatConnection(ClientVoicechat client, InitializationData data) throws Exception {
         super(client, data);
         super.close();
         ClientCompatibilityManager.INSTANCE.emitVoiceChatConnectedEvent(this);
@@ -29,7 +28,7 @@ public class FakeVoicechatConnection extends ClientVoicechatConnection {
     }
 
     @Override
-    public DatagramSocket getSocket() {
+    public ClientVoicechatSocket getSocket() {
         return null;
     }
 
