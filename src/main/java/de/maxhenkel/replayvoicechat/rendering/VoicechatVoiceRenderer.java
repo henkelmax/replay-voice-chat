@@ -201,13 +201,7 @@ public class VoicechatVoiceRenderer extends Thread {
     }
 
     private void onStop() {
-        try {
-            recorder.convert((progress) -> {
-                ReplayVoicechat.LOGGER.info("Saving voicechat: " + progress * 100F + "%");
-            });
-        } catch (UnsupportedAudioFileException | IOException e) {
-            e.printStackTrace();
-        }
+        recorder.saveAndClose();
         ReplayVoicechat.LOGGER.info("Voicechat data saved!");
         recorder.close();
     }

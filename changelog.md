@@ -1,1 +1,1 @@
-- Updated to 1.19.2
+- Fixed compatibility with latest voice chat version
