@@ -38,7 +38,7 @@ public class FakeVoicechatConnection extends ClientVoicechatConnection {
     }
 
     @Override
-    public boolean isAuthenticated() {
+    public boolean isInitialized() {
         return true;
     }
 

@@ -1,1 +1,1 @@
-- Updated ReplayMod version
+- Updated voice chat and replay mod version
