@@ -1,6 +1,6 @@
 plugins {
-    id 'fabric-loom' version '1.0-SNAPSHOT'
-    id 'com.github.johnrengelman.shadow' version '7.1.0'
+    id 'fabric-loom' version '1.2-SNAPSHOT'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
     id 'com.matthewprenger.cursegradle' version '1.4.0'
     id 'com.modrinth.minotaur' version '2.+'
 }
@@ -15,21 +15,20 @@ group = maven_group
 repositories {
     mavenCentral()
     maven {
-        name = "henkelmax.public"
+        name = 'henkelmax.public'
         url = 'https://maven.maxhenkel.de/repository/public'
     }
     maven {
-        name = "Modrinth"
-        url = "https://api.modrinth.com/maven"
+        url = 'https://api.modrinth.com/maven'
         content {
-            includeGroup "maven.modrinth"
+            includeGroup 'maven.modrinth'
         }
     }
     mavenLocal()
 }
 
 runClient.doFirst {
-    args = ['--username', System.getProperty("user.name")]
+    args = ['--username', System.getProperty('user.name')]
 }
 
 dependencies {
@@ -38,8 +37,8 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${loader_version}"
 
     Set<String> apiModules = [
-            "fabric-api-base",
-            "fabric-networking-api-v1"
+            'fabric-api-base',
+            'fabric-networking-api-v1'
     ]
 
     apiModules.forEach {
@@ -52,8 +51,8 @@ dependencies {
 
     implementation "de.maxhenkel.voicechat:voicechat-api:${voicechat_api_version}"
 
-    implementation "de.maxhenkel.sonic:sonic:1.0.0-SNAPSHOT"
-    shadow "de.maxhenkel.sonic:sonic:1.0.0-SNAPSHOT"
+    implementation 'de.maxhenkel.sonic:sonic:1.0.0-SNAPSHOT'
+    shadow 'de.maxhenkel.sonic:sonic:1.0.0-SNAPSHOT'
 
     modImplementation "maven.modrinth:simple-voice-chat:fabric-${voicechat_dependency}"
 
@@ -61,16 +60,16 @@ dependencies {
 }
 
 processResources {
-    inputs.property "version", version
-    from("LICENSE")
-    filesMatching("fabric.mod.json") {
-        expand "version": mod_version,
-                "java_version": java_version,
-                "minecraft_dependency": minecraft_dependency,
-                "loader_version": loader_version,
-                "voicechat_dependency": voicechat_dependency,
-                "voicechat_breaks": voicechat_breaks,
-                "replaymod_dependency": replaymod_dependency
+    inputs.property 'version', version
+    from('LICENSE')
+    filesMatching('fabric.mod.json') {
+        expand 'version': mod_version,
+                'java_version': java_version,
+                'minecraft_dependency': minecraft_dependency,
+                'loader_version': loader_version,
+                'voicechat_dependency': voicechat_dependency,
+                'voicechat_breaks': voicechat_breaks,
+                'replaymod_dependency': replaymod_dependency
     }
 }
 
@@ -83,23 +82,20 @@ java {
 }
 
 jar {
-    from("LICENSE") {
+    from('LICENSE') {
         rename { "${it}_${project.archivesBaseName}" }
     }
 }
 
 shadowJar {
     configurations = [project.configurations.shadow]
-    classifier 'shadow-dev'
+    archiveClassifier = 'shadow-dev'
     relocate 'de.maxhenkel.sonic', "de.maxhenkel.${archives_base_name}.sonic"
 }
 
-prepareRemapJar {
-    dependsOn shadowJar
-}
-
 remapJar {
-    input = shadowJar.archiveFile.get()
+    dependsOn shadowJar
+    inputFile = shadowJar.archiveFile.get()
 }
 
 curseforge {
@@ -107,7 +103,7 @@ curseforge {
     project {
         id = curse_id
         changelogType = 'markdown'
-        changelog = file("changelog.md")
+        changelog = file('changelog.md')
         releaseType = release_type
         addGameVersion curseforge_minecraft_version
         addGameVersion 'Fabric'
@@ -138,11 +134,11 @@ modrinth {
     versionName = "[FABRIC][${minecraft_version}] ${mod_name} ${mod_version}"
     uploadFile = remapJar
     versionType = release_type.toUpperCase()
-    changelog = file("changelog.md").text
+    changelog = file('changelog.md').text
     gameVersions = [minecraft_version]
     loaders = ['fabric']
     dependencies {
-        required.project "9eGKb6K1" // Simple Voice Chat
+        required.project '9eGKb6K1' // Simple Voice Chat
     }
 }
 tasks.modrinth.dependsOn(build)
