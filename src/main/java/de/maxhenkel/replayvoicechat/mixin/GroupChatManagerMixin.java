@@ -1,7 +1,7 @@
 package de.maxhenkel.replayvoicechat.mixin;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import de.maxhenkel.voicechat.voice.client.GroupChatManager;
+import net.minecraft.client.gui.GuiGraphics;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -12,7 +12,7 @@ import xyz.breadloaf.replaymodinterface.ReplayInterface;
 public class GroupChatManagerMixin {
 
     @Inject(method = "renderIcons", at = @At(value = "HEAD"), cancellable = true)
-    private static void renderIcons(PoseStack matrixStack, CallbackInfo ci) {
+    private static void renderIcons(GuiGraphics guiGraphics, CallbackInfo ci) {
         if (ReplayInterface.INSTANCE.isInReplayEditor) {
             ci.cancel();
         }
