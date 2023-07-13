@@ -15,7 +15,6 @@ import net.minecraft.world.phys.Vec3;
 import xyz.breadloaf.replaymodinterface.ReplayInterface;
 
 import javax.annotation.Nullable;
-import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -42,7 +41,7 @@ public class VoicechatVoiceRenderer extends Thread {
             try {
                 INSTANCE.stopAndWait();
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                ReplayVoicechat.LOGGER.error("Failed to stop rendering", e);
             }
             INSTANCE = null;
         } else {
@@ -69,7 +68,7 @@ public class VoicechatVoiceRenderer extends Thread {
                     INSTANCE.packets.put(new PacketWrapper(packet, ReplayInterface.INSTANCE.videoRenderer.getVideoTime(), yrot, cameraLocation, ReplayInterface.getCurrentSpeed()));
                 }
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                ReplayVoicechat.LOGGER.error("Failed to handle sound packet", e);
             }
         }
     }
@@ -87,6 +86,9 @@ public class VoicechatVoiceRenderer extends Thread {
         packets = new LinkedBlockingQueue<>();
         sonicMap = new HashMap<>();
         setName("ReplayVoiceChatVoiceRenderThread");
+        setUncaughtExceptionHandler((thread, throwable) -> {
+            ReplayVoicechat.LOGGER.error("Error in voice render thread", throwable);
+        });
     }
 
     private void startRecording() {
@@ -114,19 +116,21 @@ public class VoicechatVoiceRenderer extends Thread {
             try {
                 packetWrapper = packets.poll(250, TimeUnit.MILLISECONDS);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                ReplayVoicechat.LOGGER.error("Failed to poll voice chat packets", e);
             }
-
             if (packetWrapper == null) {
                 continue;
             }
-
-            if (packetWrapper.packet instanceof LocationalSoundPacket packet) {
-                onLocationalSoundPacket(packetWrapper, packet);
-            } else if (packetWrapper.packet instanceof EntitySoundPacket packet) {
-                onEntitySoundPacket(packetWrapper, packet);
-            } else if (packetWrapper.packet instanceof StaticSoundPacket packet) {
-                onStaticSoundPacket(packetWrapper, packet);
+            try {
+                if (packetWrapper.packet instanceof LocationalSoundPacket packet) {
+                    onLocationalSoundPacket(packetWrapper, packet);
+                } else if (packetWrapper.packet instanceof EntitySoundPacket packet) {
+                    onEntitySoundPacket(packetWrapper, packet);
+                } else if (packetWrapper.packet instanceof StaticSoundPacket packet) {
+                    onStaticSoundPacket(packetWrapper, packet);
+                }
+            } catch (Exception e) {
+                ReplayVoicechat.LOGGER.error("Failed to process packet", e);
             }
         }
         onStop();
@@ -144,13 +148,19 @@ public class VoicechatVoiceRenderer extends Thread {
                             setSpeed(locationalSoundPacket.getId(), locationalSoundPacket.getRawAudio(), packetWrapper.speed)
                     ));
         } catch (IOException e) {
-            e.printStackTrace();
+            ReplayVoicechat.LOGGER.error("Failed to render locational sound", e);
         }
     }
 
     private void onEntitySoundPacket(PacketWrapper packetWrapper, EntitySoundPacket entitySoundPacket) {
         try {
+            if (MC.level == null) {
+                return;
+            }
             @Nullable Player player = MC.level.getPlayerByUUID(entitySoundPacket.getId());
+            if (player == null) {
+                return;
+            }
             Vec3 pos = player.getEyePosition();
             recorder.appendChunk(entitySoundPacket.getId(), packetWrapper.timestamp,
                     PositionalAudioUtils.convertToStereoForRecording(
@@ -161,7 +171,7 @@ public class VoicechatVoiceRenderer extends Thread {
                             setSpeed(entitySoundPacket.getId(), entitySoundPacket.getRawAudio(), packetWrapper.speed)
                     ));
         } catch (IOException e) {
-            e.printStackTrace();
+            ReplayVoicechat.LOGGER.error("Failed to render entity sound", e);
         }
     }
 
@@ -169,7 +179,7 @@ public class VoicechatVoiceRenderer extends Thread {
         try {
             recorder.appendChunk(staticSoundPacket.getId(), packetWrapper.timestamp, PositionalAudioUtils.convertToStereo(setSpeed(staticSoundPacket.getId(), staticSoundPacket.getRawAudio(), packetWrapper.speed)));
         } catch (IOException e) {
-            e.printStackTrace();
+            ReplayVoicechat.LOGGER.error("Failed to render static sound", e);
         }
     }
 
@@ -202,7 +212,7 @@ public class VoicechatVoiceRenderer extends Thread {
 
     private void onStop() {
         recorder.saveAndClose();
-        ReplayVoicechat.LOGGER.info("Voicechat data saved!");
+        ReplayVoicechat.LOGGER.info("Voice chat data saved!");
         recorder.close();
     }
 
