@@ -1,1 +1,1 @@
-- Update to 1.20.1
+- Fixed invalid or incomplete audio in renders
