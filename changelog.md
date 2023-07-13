@@ -1,1 +1,1 @@
-- Updated voice chat and replay mod version
+- Fixed invalid or incomplete audio in renders
