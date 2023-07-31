@@ -2,7 +2,7 @@
 name: Bug report
 about: Create a report to help us improve
 title: ''
-labels: bug
+labels: triage
 assignees: henkelmax, mjwells2002
 
 ---
@@ -25,9 +25,9 @@ Don't paste the complete logs into the issue.
 You can use [https://gist.github.com/](https://gist.github.com/).
 
 **Versions**
-- Minecraft version
-- Fabric version
 - Simple Voice Chat version
+- Minecraft version
+- Fabric loader version
 - ReplayMod Version
 - Mod version
 
