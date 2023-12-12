@@ -36,6 +36,9 @@
     "replaymod": "=${replaymod_dependency}"
   },
   "breaks": {
-    "voicechat": ">=${voicechat_breaks}"
+    "voicechat": [
+      "20.4.30",
+      ">=${voicechat_breaks}"
+    ]
   }
 }
