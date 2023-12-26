@@ -1,141 +1,34 @@
 plugins {
-    id 'fabric-loom' version '1.3-SNAPSHOT'
-    id 'com.github.johnrengelman.shadow' version '8.1.1'
-    id 'com.matthewprenger.cursegradle' version '1.4.0'
-    id 'com.modrinth.minotaur' version '2.+'
+    id 'com.github.johnrengelman.shadow' version "${shadow_version}"
+    id 'fabric-loom' version "${fabric_loom_version}"
+    id 'com.matthewprenger.cursegradle' version "${cursegradle_version}"
+    id 'com.modrinth.minotaur' version "${minotaur_version}"
 }
 
-sourceCompatibility = JavaLanguageVersion.of(java_version as int)
-targetCompatibility = JavaLanguageVersion.of(java_version as int)
-
-archivesBaseName = archives_base_name
-version = mod_version
-group = maven_group
-
-repositories {
-    mavenCentral()
-    maven { url = 'https://maven.maxhenkel.de/repository/public' }
-    maven {
-        url = 'https://api.modrinth.com/maven'
-        content {
-            includeGroup 'maven.modrinth'
-        }
-    }
-    mavenLocal()
-}
-
-runClient.doFirst {
-    args = ['--username', System.getProperty('user.name')]
-}
+apply from: "https://raw.githubusercontent.com/henkelmax/mod-gradle-scripts/${mod_gradle_script_version}/mod.gradle"
 
 dependencies {
-    minecraft "com.mojang:minecraft:${minecraft_version}"
-    mappings loom.officialMojangMappings()
-    modImplementation "net.fabricmc:fabric-loader:${loader_version}"
-
-    Set<String> apiModules = [
-            'fabric-api-base',
-            'fabric-networking-api-v1'
-    ]
-
-    apiModules.forEach {
-        include(modImplementation(fabricApi.module(it, fabric_version)))
-    }
-
-    modRuntimeOnly "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
-
-    implementation 'com.google.code.findbugs:jsr305:3.0.2'
-
     implementation "de.maxhenkel.voicechat:voicechat-api:${voicechat_api_version}"
 
-    implementation 'de.maxhenkel.sonic:sonic:1.0.0-SNAPSHOT'
-    shadow 'de.maxhenkel.sonic:sonic:1.0.0-SNAPSHOT'
+    implementation "de.maxhenkel.sonic:sonic:${sonic_version}"
+    shadow "de.maxhenkel.sonic:sonic:${sonic_version}"
 
-    modImplementation "maven.modrinth:simple-voice-chat:fabric-${voicechat_dependency}"
-    modImplementation "maven.modrinth:replaymod:${replaymod_dependency}"
+    modImplementation "maven.modrinth:simple-voice-chat:fabric-${voicechat_version}"
+    modImplementation "maven.modrinth:replaymod:${replaymod_version}"
 }
 
 processResources {
-    inputs.property 'version', version
-    from('LICENSE')
     filesMatching('fabric.mod.json') {
-        expand 'version': mod_version,
-                'java_version': java_version,
+        expand 'mod_version': mod_version,
                 'minecraft_dependency': minecraft_dependency,
-                'loader_version': loader_version,
+                'fabric_loader_dependency': fabric_loader_dependency,
+                'fabric_api_dependency_breaks': fabric_api_dependency_breaks,
                 'voicechat_dependency': voicechat_dependency,
-                'voicechat_breaks': voicechat_breaks,
+                'voicechat_dependency_breaks': voicechat_dependency_breaks,
                 'replaymod_dependency': replaymod_dependency
     }
 }
 
-tasks.withType(JavaCompile).configureEach {
-    it.options.release = java_version as int
-}
-
-java {
-    withSourcesJar()
-}
-
-jar {
-    from('LICENSE') {
-        rename { "${it}_${project.archivesBaseName}" }
-    }
-}
-
 shadowJar {
-    configurations = [project.configurations.shadow]
-    archiveClassifier = 'shadow-dev'
-    relocate 'de.maxhenkel.sonic', "de.maxhenkel.${archives_base_name}.sonic"
+    relocate 'de.maxhenkel.sonic', 'de.maxhenkel.replayvoicechat.sonic'
 }
-
-remapJar {
-    dependsOn shadowJar
-    inputFile = shadowJar.archiveFile.get()
-}
-
-curseforge {
-    apiKey = file("${rootDir}/curseforge_api_key.txt").exists() ? file("${rootDir}/curseforge_api_key.txt").text : ''
-    project {
-        id = curse_id
-        changelogType = 'markdown'
-        changelog = file('changelog.md')
-        releaseType = release_type
-        addGameVersion curseforge_minecraft_version
-        addGameVersion 'Fabric'
-        addGameVersion "Java ${java_version}"
-        mainArtifact(file("${buildDir}/libs/${archivesBaseName}-${version}.jar")) {
-            displayName = "[FABRIC][${minecraft_version}] ${mod_name} ${mod_version}"
-            relations {
-                requiredDependency 'simple-voice-chat'
-            }
-        }
-        afterEvaluate {
-            uploadTask.dependsOn(remapJar)
-        }
-    }
-    options {
-        forgeGradleIntegration = false
-    }
-}
-
-tasks.modrinth.configure({
-    group = 'upload'
-})
-
-modrinth {
-    token = file("${rootDir}/modrinth_token.txt").exists() ? file("${rootDir}/modrinth_token.txt").text : ''
-    projectId = modrinth_id
-    versionNumber = "fabric-${mod_version}"
-    versionName = "[FABRIC][${minecraft_version}] ${mod_name} ${mod_version}"
-    uploadFile = remapJar
-    versionType = release_type.toUpperCase()
-    changelog = file('changelog.md').text
-    gameVersions = [minecraft_version]
-    loaders = ['fabric']
-    dependencies {
-        required.project '9eGKb6K1' // Simple Voice Chat
-        required.project 'Nv2fQJo5' // ReplayMod
-    }
-}
-tasks.modrinth.dependsOn(build)

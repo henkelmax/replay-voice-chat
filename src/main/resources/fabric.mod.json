@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "replayvoicechat",
-  "version": "${version}",
+  "version": "${mod_version}",
   "name": "Replay Voice Chat",
   "description": "A compatibility mod between Simple Voice Chat and ReplayMod",
   "authors": [
@@ -13,7 +13,7 @@
     "sources": "https://github.com/henkelmax/svc-replay-mod"
   },
   "license": "MIT",
-  "icon": "assets/replayvoicechat/icon.png",
+  "icon": "icon.png",
   "environment": "client",
   "entrypoints": {
     "client": [
@@ -29,16 +29,15 @@
     "replayvoicechat.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=${loader_version}",
+    "fabricloader": "${fabric_loader_dependency}",
     "minecraft": "${minecraft_dependency}",
-    "java": ">=${java_version}",
-    "voicechat": ">=${voicechat_dependency}",
-    "replaymod": "=${replaymod_dependency}"
+    "voicechat": "${voicechat_dependency}",
+    "replaymod": "${replaymod_dependency}"
   },
   "breaks": {
     "voicechat": [
-      "20.4.30",
-      ">=${voicechat_breaks}"
+      "2.4.30",
+      "${voicechat_dependency_breaks}"
     ]
   }
 }
