@@ -52,6 +52,7 @@ public class FakeVoicechatConnection extends ClientVoicechatConnection {
     }
 
     @Override
-    public void sendToServer(NetworkMessage message) throws Exception {
+    public boolean sendToServer(NetworkMessage message) {
+        return true;
     }
 }

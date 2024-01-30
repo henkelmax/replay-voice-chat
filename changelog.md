@@ -1,1 +1,2 @@
+- Added compatibility with Simple Voice Chat 2.5.x
 - Updated dependencies
