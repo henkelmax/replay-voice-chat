@@ -26,6 +26,22 @@ body:
     validations:
       required: true
   - type: input
+    id: voicechat_version
+    attributes:
+      label: Simple Voice Chat version
+      description: The version of Simple Voice Chat.
+      placeholder: 1.20.4-1.2.3
+    validations:
+      required: true
+  - type: input
+    id: replaymod_version
+    attributes:
+      label: ReplayMod version
+      description: The version of ReplayMod.
+      placeholder: 1.20.4-1.2.3
+    validations:
+      required: true
+  - type: input
     id: mod_version
     attributes:
       label: Mod version
