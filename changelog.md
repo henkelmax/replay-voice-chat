@@ -1,2 +1,1 @@
-- Added compatibility with Simple Voice Chat 2.5.x
-- Updated dependencies
+- Added compatibility with Replay Mod version 2.6.15
