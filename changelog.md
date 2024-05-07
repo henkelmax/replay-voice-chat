@@ -1,1 +1,1 @@
-- Added compatibility with Replay Mod version 2.6.15
+- Also allow Minecraft version 1.20.1

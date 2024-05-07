@@ -30,14 +30,24 @@
   ],
   "depends": {
     "fabricloader": "${fabric_loader_dependency}",
-    "minecraft": "${minecraft_dependency}",
-    "voicechat": "${voicechat_dependency}",
-    "replaymod": "${replaymod_dependency}"
+    "minecraft": [
+      "1.20.4",
+      "1.20.1"
+    ],
+    "voicechat": [
+      ">=1.20.4-2.5.0 <1.20.5-1.0.0",
+      ">=1.20.1-2.5.0 <1.20.2-1.0.0"
+    ],
+    "replaymod": [
+      "1.20.4-2.6.15",
+      "1.20.1-2.6.15"
+    ],
+    "fabric-networking-api-v1": ">=0.83.0+1.20.1"
   },
   "breaks": {
     "voicechat": [
-      "2.4.30",
-      "${voicechat_dependency_breaks}"
+      ">=1.20.4-2.6.0 <1.20.5-1.0.0",
+      ">=1.20.1-2.6.0 <1.20.2-1.0.0"
     ]
   }
 }
