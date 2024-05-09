@@ -2,12 +2,14 @@ package de.maxhenkel.replayvoicechat;
 
 import de.maxhenkel.replayvoicechat.playback.AudioPlaybackManager;
 import de.maxhenkel.replayvoicechat.recording.VoicechatRecorder;
+import de.maxhenkel.voicechat.api.ForgeVoicechatPlugin;
 import de.maxhenkel.voicechat.api.VoicechatApi;
 import de.maxhenkel.voicechat.api.VoicechatClientApi;
 import de.maxhenkel.voicechat.api.VoicechatPlugin;
 import de.maxhenkel.voicechat.api.events.*;
 import de.maxhenkel.voicechat.plugins.impl.VoicechatClientApiImpl;
 
+@ForgeVoicechatPlugin
 public class ReplayVoicechatPlugin implements VoicechatPlugin {
 
     public static VoicechatClientApi CLIENT_API = VoicechatClientApiImpl.instance();
