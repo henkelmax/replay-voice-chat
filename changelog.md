@@ -1,1 +1,2 @@
 - Also allow Minecraft version 1.20.1
+- Allow the usage of the Forge voice chat version using Sinytra Connector
