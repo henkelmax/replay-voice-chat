@@ -5,13 +5,14 @@ import de.maxhenkel.replayvoicechat.ReplayVoicechatPlugin;
 import de.maxhenkel.replayvoicechat.playback.AudioPlaybackManager;
 import de.maxhenkel.voicechat.api.Position;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.UUID;
 
 public class LocationalSoundPacket extends AbstractSoundPacket<LocationalSoundPacket> {
 
-    public static ResourceLocation ID = new ResourceLocation(ReplayVoicechat.MOD_ID, "locational_sound");
+    public static final CustomPacketPayload.Type<LocationalSoundPacket> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(ReplayVoicechat.MOD_ID, "locational_sound"));
 
     private Position location;
     private float distance;
@@ -32,11 +33,6 @@ public class LocationalSoundPacket extends AbstractSoundPacket<LocationalSoundPa
 
     public float getDistance() {
         return distance;
-    }
-
-    @Override
-    public ResourceLocation getIdentifier() {
-        return ID;
     }
 
     @Override
@@ -65,4 +61,8 @@ public class LocationalSoundPacket extends AbstractSoundPacket<LocationalSoundPa
         AudioPlaybackManager.INSTANCE.onLocationalSound(this);
     }
 
+    @Override
+    public Type<LocationalSoundPacket> type() {
+        return TYPE;
+    }
 }

@@ -21,7 +21,10 @@ processResources {
     filesMatching('fabric.mod.json') {
         expand 'mod_version': mod_version,
                 'minecraft_dependency': minecraft_dependency,
-                'fabric_loader_dependency': fabric_loader_dependency
+                'fabric_loader_dependency': fabric_loader_dependency,
+                'voicechat_dependency': voicechat_dependency,
+                'voicechat_dependency_breaks': voicechat_dependency_breaks,
+                'replaymod_dependency': replaymod_dependency
     }
 }
 

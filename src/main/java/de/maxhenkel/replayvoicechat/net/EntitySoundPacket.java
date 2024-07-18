@@ -4,13 +4,14 @@ import de.maxhenkel.replayvoicechat.ReplayVoicechat;
 import de.maxhenkel.replayvoicechat.ReplayVoicechatPlugin;
 import de.maxhenkel.replayvoicechat.playback.AudioPlaybackManager;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.UUID;
 
 public class EntitySoundPacket extends AbstractSoundPacket<EntitySoundPacket> {
 
-    public static ResourceLocation ID = new ResourceLocation(ReplayVoicechat.MOD_ID, "entity_sound");
+    public static final CustomPacketPayload.Type<EntitySoundPacket> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(ReplayVoicechat.MOD_ID, "entity_sound"));
 
     private boolean whispering;
     private float distance;
@@ -23,11 +24,6 @@ public class EntitySoundPacket extends AbstractSoundPacket<EntitySoundPacket> {
 
     public EntitySoundPacket() {
 
-    }
-
-    @Override
-    public ResourceLocation getIdentifier() {
-        return ID;
     }
 
     public boolean isWhispering() {
@@ -62,4 +58,8 @@ public class EntitySoundPacket extends AbstractSoundPacket<EntitySoundPacket> {
         AudioPlaybackManager.INSTANCE.onEntitySound(this);
     }
 
+    @Override
+    public Type<EntitySoundPacket> type() {
+        return TYPE;
+    }
 }
