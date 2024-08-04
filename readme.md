@@ -16,6 +16,10 @@ with [ReplayMod](https://www.replaymod.com/).
 - Simple Voice Chat Plugin API support
 - Support for speeding up or slowing down replays
 
+## Supported Versions
+
+Only the latest Minecraft version ReplayMod is released to is actively supported.
+
 ## Configuration
 
 If you are the server owner, you can set `broadcast_range` in the voice chat config to a higher value, to be able to
