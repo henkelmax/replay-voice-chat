@@ -1,5 +1,8 @@
 # Replay Voice Chat
 
+> [!TIP]
+> Consider using [Flashback](https://modrinth.com/mod/flashback) which has built-in support for Simple Voice Chat.
+
 A compatibility mod to record [Simple Voice Chat](https://www.curseforge.com/minecraft/mc-mods/simple-voice-chat)
 with [ReplayMod](https://www.replaymod.com/).
 
