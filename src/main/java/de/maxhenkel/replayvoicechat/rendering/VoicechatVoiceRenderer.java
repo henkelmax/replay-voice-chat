@@ -23,6 +23,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 public class VoicechatVoiceRenderer extends Thread {
+
+    public static final int SAMPLE_RATE = 48000;
+
     private static VoicechatVoiceRenderer INSTANCE;
     private static InitializationData data;
     private static final Minecraft MC = Minecraft.getInstance();
@@ -189,7 +192,7 @@ public class VoicechatVoiceRenderer extends Thread {
         }
         Sonic stream;
         if (!sonicMap.containsKey(channelId)) {
-            stream = new Sonic(SoundManager.SAMPLE_RATE, 1);
+            stream = new Sonic(SAMPLE_RATE, 1);
             sonicMap.put(channelId, stream);
         } else {
             stream = sonicMap.get(channelId);
