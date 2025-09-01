@@ -63,7 +63,7 @@ public class VoicechatVoiceRenderer extends Thread {
                 if (client == null) {
                     return;
                 }
-                client.getTalkCache().updateTalking(packet.getId(), packet instanceof EntitySoundPacket p && p.isWhispering());
+                client.getTalkCache().updateLevel(packet.getId(), null, packet instanceof EntitySoundPacket p && p.isWhispering(), packet.getRawAudio());
                 if (ReplayInterface.INSTANCE.isPlayerHidden(packet.getId())) {
                     return;
                 }
