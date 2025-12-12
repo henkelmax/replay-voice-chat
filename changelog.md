@@ -1,1 +1,1 @@
-- Updated to be compatible with Simple Voice Chat 2.6.0
+- Updated to Minecraft 1.21.10 and ReplayMod 1.21.10-2.6.24

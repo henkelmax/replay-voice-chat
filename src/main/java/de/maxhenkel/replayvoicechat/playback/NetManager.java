@@ -52,7 +52,7 @@ public class NetManager {
                 }
                 try {
                     if (ReplayInterface.INSTANCE.isRendering) {
-                        if (Minecraft.getInstance().cameraEntity != null) {
+                        if (Minecraft.getInstance().getCameraEntity() != null) {
                             VoicechatVoiceRenderer.onRecordingPacket((AbstractSoundPacket<?>) payload);
                         }
                         return;
