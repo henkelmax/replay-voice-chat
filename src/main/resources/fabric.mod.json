@@ -31,10 +31,7 @@
   "depends": {
     "fabricloader": "${fabric_loader_dependency}",
     "minecraft": "${minecraft_dependency}",
-    "voicechat": "${voicechat_dependency}",
+    "voicechat_api": "${voicechat_api_dependency}",
     "replaymod": "${replaymod_dependency}"
-  },
-  "breaks": {
-    "voicechat": ">=${voicechat_dependency_breaks}"
   }
 }

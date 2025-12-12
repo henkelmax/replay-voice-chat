@@ -13,7 +13,9 @@ dependencies {
     implementation "de.maxhenkel.sonic:sonic:${sonic_version}"
     shadow "de.maxhenkel.sonic:sonic:${sonic_version}"
 
-    modImplementation "maven.modrinth:simple-voice-chat:fabric-${voicechat_version}"
+    implementation "de.maxhenkel.voicechat:voicechat-api:${voicechat_api_version}"
+    modRuntimeOnly "de.maxhenkel.voicechat:voicechat-api:${voicechat_api_version}:fabric-stub"
+    modImplementation "maven.modrinth:simple-voice-chat:fabric-${voicechat_mod_version}"
     modImplementation "maven.modrinth:replaymod:${replaymod_version}"
 }
 
@@ -22,8 +24,7 @@ processResources {
         expand 'mod_version': mod_version,
                 'minecraft_dependency': minecraft_dependency,
                 'fabric_loader_dependency': fabric_loader_dependency,
-                'voicechat_dependency': voicechat_dependency,
-                'voicechat_dependency_breaks': voicechat_dependency_breaks,
+                'voicechat_api_dependency': voicechat_api_dependency,
                 'replaymod_dependency': replaymod_dependency
     }
 }
