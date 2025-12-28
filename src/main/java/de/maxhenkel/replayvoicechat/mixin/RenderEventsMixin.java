@@ -2,7 +2,7 @@ package de.maxhenkel.replayvoicechat.mixin;
 
 import de.maxhenkel.voicechat.voice.client.RenderEvents;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -21,7 +21,7 @@ public class RenderEventsMixin {
     }
 
     @Inject(method = "renderIcon", at = @At(value = "HEAD"), cancellable = true)
-    private void renderIcon(GuiGraphics guiGraphics, ResourceLocation texture, CallbackInfo ci) {
+    private void renderIcon(GuiGraphics guiGraphics, Identifier texture, CallbackInfo ci) {
         if (ReplayInterface.INSTANCE.isInReplayEditor) {
             ci.cancel();
         }

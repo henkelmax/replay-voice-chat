@@ -5,13 +5,13 @@ import de.maxhenkel.replayvoicechat.ReplayVoicechatPlugin;
 import de.maxhenkel.replayvoicechat.playback.AudioPlaybackManager;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.UUID;
 
 public class EntitySoundPacket extends AbstractSoundPacket<EntitySoundPacket> {
 
-    public static final CustomPacketPayload.Type<EntitySoundPacket> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(ReplayVoicechat.MOD_ID, "entity_sound"));
+    public static final CustomPacketPayload.Type<EntitySoundPacket> TYPE = new CustomPacketPayload.Type<>(Identifier.fromNamespaceAndPath(ReplayVoicechat.MOD_ID, "entity_sound"));
 
     private boolean whispering;
     private float distance;

@@ -56,8 +56,8 @@ public class VoicechatVoiceRenderer extends Thread {
     public static void onRecordingPacket(AbstractSoundPacket<?> packet) {
         if (INSTANCE != null && INSTANCE.running) {
             try {
-                Vec3 cameraLocation = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
-                float yrot = Minecraft.getInstance().gameRenderer.getMainCamera().getYRot();
+                Vec3 cameraLocation = Minecraft.getInstance().gameRenderer.getMainCamera().position();
+                float yrot = Minecraft.getInstance().gameRenderer.getMainCamera().yRot();
 
                 ClientVoicechat client = ClientManager.getClient();
                 if (client == null) {

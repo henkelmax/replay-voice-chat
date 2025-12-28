@@ -6,13 +6,13 @@ import de.maxhenkel.replayvoicechat.playback.AudioPlaybackManager;
 import de.maxhenkel.voicechat.api.Position;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.UUID;
 
 public class LocationalSoundPacket extends AbstractSoundPacket<LocationalSoundPacket> {
 
-    public static final CustomPacketPayload.Type<LocationalSoundPacket> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(ReplayVoicechat.MOD_ID, "locational_sound"));
+    public static final CustomPacketPayload.Type<LocationalSoundPacket> TYPE = new CustomPacketPayload.Type<>(Identifier.fromNamespaceAndPath(ReplayVoicechat.MOD_ID, "locational_sound"));
 
     private Position location;
     private float distance;

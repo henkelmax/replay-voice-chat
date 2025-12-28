@@ -3,13 +3,13 @@ package de.maxhenkel.replayvoicechat.net;
 import de.maxhenkel.replayvoicechat.ReplayVoicechat;
 import de.maxhenkel.replayvoicechat.playback.AudioPlaybackManager;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.UUID;
 
 public class StaticSoundPacket extends AbstractSoundPacket<StaticSoundPacket> {
 
-    public static final CustomPacketPayload.Type<StaticSoundPacket> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(ReplayVoicechat.MOD_ID, "static_sound"));
+    public static final CustomPacketPayload.Type<StaticSoundPacket> TYPE = new CustomPacketPayload.Type<>(Identifier.fromNamespaceAndPath(ReplayVoicechat.MOD_ID, "static_sound"));
 
 
     public StaticSoundPacket(UUID id, short[] rawAudio) {
