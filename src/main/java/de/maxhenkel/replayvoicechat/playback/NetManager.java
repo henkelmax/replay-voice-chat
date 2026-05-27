@@ -45,7 +45,7 @@ public class NetManager {
                 }
             };
             CustomPacketPayload.Type<T> type = (CustomPacketPayload.Type<T>) dummyPacket.type();
-            PayloadTypeRegistry.playS2C().register(type, codec);
+            PayloadTypeRegistry.clientboundPlay().register(type, codec);
             ClientPlayNetworking.registerGlobalReceiver(type, (payload, context) -> {
                 if (payload == null) {
                     return;
