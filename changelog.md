@@ -1,1 +1,1 @@
-- Updated to Minecraft 26.1.2 and ReplayMod 26.1-2.6.26
+- Updated to Minecraft 26.2 and ReplayMod 26.2-2.6.27
